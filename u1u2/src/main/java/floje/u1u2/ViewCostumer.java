@@ -18,19 +18,21 @@ public class ViewCostumer extends JFrame implements Observer{
 	private JPanel leftSide = new JPanel();
 	private JTable productTable;
 	private Object[][] data;
+	private  JScrollPane scrollPane;
+	private JPanel buttonPanel;
 	
 	public ViewCostumer(fpt.com.Product[] product){
 		super("PC-Hardware Shop Costumer");
 		this.setPreferredSize(new Dimension(width, height));
-		this.setMinimumSize(new Dimension(width, height));
-		this.setMaximumSize(new Dimension(width, height));
+		this.setMinimumSize(new Dimension(600, 275));
+		//this.setMaximumSize(new Dimension(width, height));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLayout(new FlowLayout());
 		
-		leftSide.setPreferredSize(new Dimension((int)(800 * 0.4), 400));
+		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
 		leftSide.setLayout(new FlowLayout());
-		rightSide.setPreferredSize(new Dimension((int)(800 * 0.6), 400));
-		rightSide.setLayout(new FlowLayout());
+		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
+		rightSide.setLayout(new BorderLayout());;
 		
 		String[] columnNames = {"Name",
                 "Preis",
@@ -57,35 +59,37 @@ public class ViewCostumer extends JFrame implements Observer{
 		
 		productTable=new JTable(data,columnNames);
 		
-		JScrollPane scrollPane = new JScrollPane(productTable);
+		scrollPane = new JScrollPane(productTable);
 		
 		productTable.setFillsViewportHeight(true);
 		//productTable.setEditingColumn(4);
 		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setPreferredSize(new Dimension((int)(800 * 0.6),100));
-		productTable.setPreferredSize(new Dimension(((int)(600 * 0.6)),(400-100)));
-		//productTable.setPreferredScrollableViewportSize(new Dimension(scrollPane.getWidth(),scrollPane.getHeight()));
+		buttonPanel = new JPanel();
+		buttonPanel.setPreferredSize(new Dimension((int)(rightSide.getWidth() * 0.6),70));
+		productTable.setPreferredSize(new Dimension(((int)(rightSide.getWidth() * 0.6)),(rightSide.getHeight()-70)));
+		scrollPane.setPreferredSize(new Dimension(rightSide.getWidth(),rightSide.getHeight()-70));
 		buttonPanel.setLayout(new BorderLayout());
 		
 		JButton ok = new JButton("ok");
-		ok.setPreferredSize(new Dimension(20,10));
-		//buttonPanel.setMinimumSize(new Dimension(200,100));
+		ok.setPreferredSize(new Dimension(100,70));
+		
 		
 		buttonPanel.add(ok, BorderLayout.WEST);
 		
 		
 		
 		
-		rightSide.add(scrollPane);
-		rightSide.add(buttonPanel);
+		rightSide.add(scrollPane, BorderLayout.CENTER);
+		rightSide.add(buttonPanel, BorderLayout.SOUTH);
 		
 		this.add(leftSide);
 		this.add(rightSide);
 		
 		this.pack();
+		
 		this.setVisible(true);
 		
+
 		
 	}
 
@@ -104,10 +108,14 @@ public class ViewCostumer extends JFrame implements Observer{
 		
 	}
 	
-//	public void paint (Graphics g) {
-//		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
-//		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
-//		super.paint(g);
-//	}
+	public void paint (Graphics g) {
+		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
+		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
+//		buttonPanel.setPreferredSize(new Dimension((int)(rightSide.getWidth() * 0.6),70));
+//		productTable.setPreferredSize(new Dimension(((int)(rightSide.getWidth() * 0.6)),(rightSide.getHeight()-70)));
+//		scrollPane.setPreferredSize(new Dimension(rightSide.getWidth(),rightSide.getHeight()-70));
+		this.pack();
+		super.paint(g);
+	}
 
 }
