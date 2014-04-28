@@ -15,22 +15,44 @@ public class ViewCostumer extends JFrame implements Observer{
 	
 	private static final int width = 800, height = 400;
 	private JPanel rightSide = new JPanel();
-	private JPanel leftSide = new JPanel();
+	private JScrollPane leftSide;
 	private JTable productTable;
 	private Object[][] data;
 	private  JScrollPane scrollPane;
 	private JPanel buttonPanel;
+	private JList<fpt.com.Order> orderList; 
 	
-	public ViewCostumer(fpt.com.Product[] product){
+	public ViewCostumer(){
 		super("PC-Hardware Shop Costumer");
 		this.setPreferredSize(new Dimension(width, height));
-		this.setMinimumSize(new Dimension(600, 275));
+		//this.setResizable(false);
+		this.setMinimumSize(new Dimension(width, height));
 		//this.setMaximumSize(new Dimension(width, height));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setLayout(new FlowLayout());
+		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.X_AXIS));
+		int screenWidth, screenHeight;
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		screenWidth = screenSize.width;
+		screenHeight = screenSize.height;
+		this.setLocation(((screenWidth - width) / 2), ((screenHeight - height) / 2)+height);
+		Order order=new Order();
+		for(int j =0;j<2;j++){
+			Product product = new Product();
+			product.setPrice(5);
+			product.setQuantity(4);
+			product.setName(""+j);
+			order.add(product);
+			
+		}
 		
+		
+		
+		orderList = new JList<fpt.com.Order>();
+		
+		orderList.setCellRenderer(new ListOrderRenderer());
+		orderList.setListData(new Order[]{order});
+		leftSide = new JScrollPane(orderList);		
 		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
-		leftSide.setLayout(new FlowLayout());
 		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
 		rightSide.setLayout(new BorderLayout());;
 		
@@ -38,36 +60,26 @@ public class ViewCostumer extends JFrame implements Observer{
                 "Preis",
                 "MaxCount",
                 "OrderCount"};
-		data=new Object[product.length][4];
+	
 		
-//		String[][] data = {
-//				{"name1", "price1", "maxcount1", "ordercount1"},
-//				{"name2", "price2", "maxcount2", "ordercount1"},
-//				{"name3", "price3", "maxcount3", "ordercount1"},
-//				
-//		};
+		String[][] data = {
+				{"name1", "price1", "maxcount1", "ordercount1"},
+				{"name2", "price2", "maxcount2", "ordercount1"},
+				{"name3", "price3", "maxcount3", "ordercount1"},
+				
+		};
 		
-		for(int i=0;i<product.length;i++){
-			
-			
-			data[i][0]=product[i].getName();
-			data[i][1]=product[i].getPrice();
-			data[i][2]=product[i].getQuantity();	
-			data[i][3]=0;
-			
-		}
+		//data=new Object[0][0];
+
 		
 		productTable=new JTable(data,columnNames);
 		
 		scrollPane = new JScrollPane(productTable);
 		
 		productTable.setFillsViewportHeight(true);
-		//productTable.setEditingColumn(4);
+		productTable.setEditingColumn(4);
 		
 		buttonPanel = new JPanel();
-		buttonPanel.setPreferredSize(new Dimension((int)(rightSide.getWidth() * 0.6),70));
-		productTable.setPreferredSize(new Dimension(((int)(rightSide.getWidth() * 0.6)),(rightSide.getHeight()-70)));
-		scrollPane.setPreferredSize(new Dimension(rightSide.getWidth(),rightSide.getHeight()-70));
 		buttonPanel.setLayout(new BorderLayout());
 		
 		JButton ok = new JButton("ok");
@@ -111,10 +123,6 @@ public class ViewCostumer extends JFrame implements Observer{
 	public void paint (Graphics g) {
 		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
 		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
-//		buttonPanel.setPreferredSize(new Dimension((int)(rightSide.getWidth() * 0.6),70));
-//		productTable.setPreferredSize(new Dimension(((int)(rightSide.getWidth() * 0.6)),(rightSide.getHeight()-70)));
-//		scrollPane.setPreferredSize(new Dimension(rightSide.getWidth(),rightSide.getHeight()-70));
-		this.pack();
 		super.paint(g);
 	}
 
