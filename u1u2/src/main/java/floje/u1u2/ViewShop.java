@@ -81,6 +81,10 @@ public class ViewShop extends JFrame implements Observer {
 			
 			@Override
 			public void caretUpdate(CaretEvent e) {
+				JTextField textField = ((JTextField)e.getSource());
+				if (textField != addNameField) {
+					textField.getInputVerifier().verify(textField);	
+				}
 				updateAddButton(false);
 			}
 		};
