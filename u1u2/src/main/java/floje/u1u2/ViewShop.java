@@ -61,18 +61,7 @@ public class ViewShop extends JFrame implements Observer {
 				updateDeleteButton();
 			}
 		});
-//		productList.addFocusListener(new FocusListener() {
-//			
-//			@Override
-//			public void focusLost(FocusEvent e) {
-//				focusGained(e);
-//			}
-//			
-//			@Override
-//			public void focusGained(FocusEvent e) {
-//				updateDeleteButton();
-//			}
-//		});
+
 		scrollPane = new JScrollPane(productList);
 		scrollPane.setPreferredSize(new Dimension((int)(width * 0.6), height));
 		this.add(scrollPane);
@@ -81,6 +70,10 @@ public class ViewShop extends JFrame implements Observer {
 			
 			@Override
 			public void caretUpdate(CaretEvent e) {
+				JTextField textField = ((JTextField)e.getSource());
+				if (textField != addNameField) {
+					textField.getInputVerifier().verify(textField);	
+				}
 				updateAddButton(false);
 			}
 		};
