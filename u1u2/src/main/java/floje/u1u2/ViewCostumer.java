@@ -25,9 +25,7 @@ public class ViewCostumer extends JFrame implements Observer{
 	public ViewCostumer(){
 		super("PC-Hardware Shop Costumer");
 		this.setPreferredSize(new Dimension(width, height));
-		//this.setResizable(false);
 		this.setMinimumSize(new Dimension(width, height));
-		//this.setMaximumSize(new Dimension(width, height));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(),BoxLayout.X_AXIS));
 		int screenWidth, screenHeight;
@@ -44,9 +42,7 @@ public class ViewCostumer extends JFrame implements Observer{
 			order.add(product);
 			
 		}
-		
-		
-		
+				
 		orderList = new JList<fpt.com.Order>();
 		
 		orderList.setCellRenderer(new ListOrderRenderer());
@@ -60,16 +56,9 @@ public class ViewCostumer extends JFrame implements Observer{
                 "Preis",
                 "MaxCount",
                 "OrderCount"};
-	
+
 		
-		String[][] data = {
-				{"name1", "price1", "maxcount1", "ordercount1"},
-				{"name2", "price2", "maxcount2", "ordercount1"},
-				{"name3", "price3", "maxcount3", "ordercount1"},
-				
-		};
-		
-		//data=new Object[0][0];
+		data=new Object[0][0];
 
 		
 		productTable=new JTable(data,columnNames);
@@ -100,8 +89,6 @@ public class ViewCostumer extends JFrame implements Observer{
 		this.pack();
 		
 		this.setVisible(true);
-		
-
 		
 	}
 
