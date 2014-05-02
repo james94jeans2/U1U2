@@ -61,12 +61,20 @@ public class ViewCostumer extends JFrame implements Observer{
 		data=new Object[0][0];
 
 		
-		productTable=new JTable(data,columnNames);
+		productTable=new JTable(data,columnNames){
+			public boolean isCellEditable(int x, int y) {
+				if(y==3){
+		        	return true;
+		        }
+				return false;
+            }
+        };
+		
 		
 		scrollPane = new JScrollPane(productTable);
 		
 		productTable.setFillsViewportHeight(true);
-		productTable.setEditingColumn(4);
+		//productTable.setEditingColumn(4);
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BorderLayout());
@@ -112,5 +120,7 @@ public class ViewCostumer extends JFrame implements Observer{
 		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
 		super.paint(g);
 	}
+	
+
 
 }
