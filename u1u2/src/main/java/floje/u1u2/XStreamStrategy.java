@@ -17,7 +17,7 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 	
 	public XStreamStrategy()throws Exception{
 		xstream = new XStream(new DomDriver());
-		xstream.aliasField("anzahl", Product.class, "count");
+		xstream.aliasField("anzahl", Product.class, "quantity");
 		xstream.aliasField("preis", Product.class, "price");
 		
 	}
@@ -39,6 +39,7 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 			fw = new FileWriter("XmlXStreamSer.xml");
 		}
 		int l = String.valueOf(obj.getId()).length();
+		ersetzte(l,String.valueOf(obj.getId()));
 		
 		xstream.toXML(obj, fw);
 	
@@ -51,6 +52,16 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 		}
 		if(fr!=null){
 			fr.close();
+		}
+		
+	}
+	
+	private void ersetzte(int l, String id){
+		
+		while(l<7){
+			id="0"+id;
+			xstream.aliasField(id, Product.class, "id");
+			
 		}
 		
 	}
