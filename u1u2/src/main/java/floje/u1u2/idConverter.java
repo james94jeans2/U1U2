@@ -2,7 +2,7 @@ package floje.u1u2;
 
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 
-import fpt.com.Product;
+
 
 public class idConverter implements SingleValueConverter {
 
