@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.converters.SingleValueConverter;
 
 
 
-public class idConverter implements SingleValueConverter {
+public class IdConverter implements SingleValueConverter {
 
 	
 	

@@ -25,8 +25,8 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 		xstream.aliasField("preis", floje.u1u2.Product.class, "price");
 		
 		xstream.useAttributeFor(floje.u1u2.Product.class, "id");
-		xstream.registerLocalConverter(floje.u1u2.Product.class, "id", new idConverter());	
-		xstream.registerLocalConverter(floje.u1u2.Product.class, "price", new priceConverter());
+		xstream.registerLocalConverter(floje.u1u2.Product.class, "id", new IdConverter());	
+		xstream.registerLocalConverter(floje.u1u2.Product.class, "price", new PriceConverter());
 
 		xstream.alias("ware", floje.u1u2.Product.class);
 		

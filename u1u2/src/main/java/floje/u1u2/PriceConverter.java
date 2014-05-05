@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 
-public class priceConverter implements SingleValueConverter {
+public class PriceConverter implements SingleValueConverter {
 
 	@Override
 	public boolean canConvert(Class arg0) {
