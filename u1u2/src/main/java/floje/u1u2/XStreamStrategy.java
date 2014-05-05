@@ -67,7 +67,7 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 	
 		
 		out.writeObject(obj);
-		//xstream.toXML(obj, fw);
+		out.flush();
 	
 	}
 
