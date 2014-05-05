@@ -1,18 +1,23 @@
 package floje.u1u2;
 
-import java.awt.*;
-import java.util.ArrayList;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-
-
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class ViewCostumer extends JFrame implements Observer{
 	
+	private static final long serialVersionUID = -5399845903830908290L;
 	private static final int width = 800, height = 400;
 	private JPanel rightSide = new JPanel();
 	private JScrollPane leftSide;
@@ -62,6 +67,8 @@ public class ViewCostumer extends JFrame implements Observer{
 
 		
 		productTable=new JTable(data,columnNames){
+			private static final long serialVersionUID = -4503641078531367197L;
+
 			public boolean isCellEditable(int x, int y) {
 				if(y==3){
 		        	return true;
