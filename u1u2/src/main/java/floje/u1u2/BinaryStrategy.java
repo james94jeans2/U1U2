@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream;
 
 import fpt.com.Product;
 
-public class BinaryStrategy implements fpt.com.SerializableStrategy {
+public class BinaryStrategy implements fpt.com.SerializableStrategy, AutoCloseable {
 	
 	private FileOutputStream fos;
 	private ObjectOutputStream out;
