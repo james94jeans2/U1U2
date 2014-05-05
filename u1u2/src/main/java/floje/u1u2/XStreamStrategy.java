@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -78,6 +77,10 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 			out.close();
 			out=null;
 		}
+		if(in!=null){
+			in.close();
+			in=null;
+		}
 		if(fw!=null){
 			fw.close();
 			fw=null;
@@ -90,16 +93,7 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 		
 	}
 	
-	private void ersetzte(String id){
-		int l = String.valueOf(id).length();
-		while(l<7){
-			id="0"+id;
-			xstream.aliasField(id, Product.class, "id");
-			l = String.valueOf(id).length();
-			
-		}
-		
-	}
+
 	
 
 }

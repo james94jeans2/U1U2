@@ -20,10 +20,11 @@ public class priceConverter implements SingleValueConverter {
 
 	@Override
 	public String toString(Object arg0) {
-		DecimalFormat dec = new DecimalFormat("#0,00");
-
 		
-		return dec.format(((double)arg0)*100);
+		DecimalFormat dec = new DecimalFormat("#0.00");
+		String string = dec.format(((double)arg0));
+		string=string.replaceAll(",",".");
+		return string;
 	}
 
 }

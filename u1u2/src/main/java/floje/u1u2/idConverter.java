@@ -10,7 +10,6 @@ public class idConverter implements SingleValueConverter {
 	
 	@Override
 	public boolean canConvert(Class arg0) {
-		// TODO Auto-generated method stub
 		return arg0.equals(Long.class);
 	}
 
