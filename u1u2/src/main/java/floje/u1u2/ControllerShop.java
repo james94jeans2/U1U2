@@ -14,12 +14,18 @@ public class ControllerShop implements ActionListener {
 		if (arg0.getActionCommand().equals("add")) {
 			fpt.com.Product product;
 			if ((product = view.getNewProduct()) != null) {
+				try {
+					IDGenerator.generateIDForProduct(model, product);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				model.add(product);
 			}
 		} else {
 			List<fpt.com.Product> selected = view.getSelected();
 			for (fpt.com.Product product : selected) {
 				model.delete(product);
+				System.out.println("Deleted ID: " + product.getId());
 			}
 		}
 	}
