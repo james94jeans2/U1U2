@@ -21,63 +21,57 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy, AutoCloseab
 
 	@Override
 	public Product readObject() throws IOException {
-		
-		if (fis == null) {
+		if (fis == null && fos == null) {
 			fis = new FileInputStream ("products.ser");
 		}
-		
+		if (fis == null) {
+			throw new IOException("This strategy is allready writing to products.xstream.xml!");
+		}
 		if (in == null) {
 			in = new ObjectInputStream(fis);
 		}
-		
 		Product pr = null;
-		
 		try {
 				pr = (Product) (in.readObject());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 		return pr;
 	}
 
 	@Override
 	public void writeObject(Product obj) throws IOException {
-		
-		if (fos == null) {
+		if (fos == null && fis == null) {
 			fos = new FileOutputStream("products.ser");
 		}
-		
+		if (fos == null) {
+			throw new IOException("This strategy is allready reading from products.xml!");
+		}
 		if (out == null) {
 			out = new ObjectOutputStream(fos);
 		}
-		
 		out.writeObject(obj);
 		out.flush();
 	}
 
 	@Override
 	public void close() throws IOException {
-		
 		if (out != null) {
 			out.close();
 			out = null;
 		}
-		
 		if (in != null) {
 			in.close();
 			in = null;
 		}
-		
 		if (fos != null) {
 			fos.close();
 			fos = null;
 		}
-		
 		if (fis != null) {
 			fis.close();
+			fis = null;
 		}
-		
 	}
 
 }

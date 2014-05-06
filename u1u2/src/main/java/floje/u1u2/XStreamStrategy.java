@@ -29,16 +29,15 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 		xstream.registerLocalConverter(floje.u1u2.Product.class, "price", new PriceConverter());
 
 		xstream.alias("ware", floje.u1u2.Product.class);
-		
-		
-		
-		
 	}
 	
 	@Override
 	public Product readObject() throws IOException{
-		if(fr==null){
-			fr = new FileReader("XmlXStreamSer.xml");
+		if(fr==null && fw == null){
+			fr = new FileReader("products.xstream.xml");
+		}
+		if (fr == null) {
+			throw new IOException("This strategy is allready writing to products.xstream.xml!");
 		}
 		if(in==null){
 			in = xstream.createObjectInputStream(fr);
@@ -47,47 +46,43 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 		try {
 			pr = (Product)(in.readObject());
 		} catch (ClassNotFoundException e) {
-			
 			e.printStackTrace();
-			
 		}
         return pr;
-		
 	}
 
 	@Override
 	public void writeObject(Product obj) throws IOException {
-		
-		if(fw==null){
-			fw = new FileWriter("XmlXStreamSer.xml");
+		if(fw == null && fr == null){
+			fw = new FileWriter("products.xstream.xml");
+		}
+		if (fw == null) {
+			throw new IOException("This strategy is allready reading from products.xml!");
 		}
 		if(out==null){
 			out = xstream.createObjectOutputStream(fw,"waren");
 		}
-	
-		
 		out.writeObject(obj);
 		out.flush();
-	
 	}
 
 	@Override
 	public void close() throws IOException {
 		if(out!=null){
 			out.close();
-			out=null;
+			//out=null;
 		}
 		if(in!=null){
 			in.close();
-			in=null;
+			//in=null;
 		}
 		if(fw!=null){
 			fw.close();
-			fw=null;
+			//fw=null;
 		}
 		if(fr!=null){
 			fr.close();
-			fr=null;
+			//fr=null;
 		}
 		
 		
