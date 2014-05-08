@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Observable;
 
 import fpt.com.Product;
+import listener.AddEvent;
+import listener.DeleteEvent;
 
 public class ModelShop extends Observable implements fpt.com.ProductList{
 	
@@ -18,13 +20,6 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 		
 	}
 
-	
-	private void change(){
-		super.setChanged();
-		super.notifyObservers();
-		
-	}
-
 	@Override
 	public Iterator<Product> iterator() {
 		return products.iterator();
@@ -33,7 +28,8 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	@Override
 	public boolean add(Product e) {
 		if( products.add(e)){
-			change();
+			super.setChanged();
+			super.notifyObservers(new AddEvent(this, (floje.u1u2.Product)e));
 			return true;
 		}
 		return false;
@@ -43,7 +39,8 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	@Override
 	public boolean delete(Product e) {
 		if( products.remove(e)){
-			change();
+			super.setChanged();
+			super.notifyObservers(new DeleteEvent(this, (floje.u1u2.Product)e));
 			return true;
 		}
 		return false;
