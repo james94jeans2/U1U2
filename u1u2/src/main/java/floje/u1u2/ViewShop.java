@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Observable;
@@ -15,13 +16,19 @@ import java.util.Observer;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
@@ -29,17 +36,25 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import listener.*;
+
 public class ViewShop extends JFrame implements Observer {
 
 	private static final long serialVersionUID = 7392956425233883188L;
 	private JList<fpt.com.Product> productList;
 	private JScrollPane scrollPane;
-	private JPanel addPanel, headingPanel, addNamePanel, addPricePanel, addQuantityPanel, addButtonPanel, fieldPanel, addAreaPanel, deleteButtonPanel;
+	private JPanel addPanel, headingPanel, addNamePanel, addPricePanel, addQuantityPanel, 
+	addButtonPanel, fieldPanel, addAreaPanel, deleteButtonPanel;
 	private JTextField addNameField, addPriceField, addQuantityField;
 	private JLabel addLabel, addNameLabel, addPriceLabel, addQuantityLabel;
 	private JButton addButton, deleteButton;
+	private JRadioButtonMenuItem noneRadio,binRadio,beanRadio,xStreamRadio;
+	private ButtonGroup buttonGroup;
+	private JMenuBar menubar;
+	private JMenu strategyMenu, loadSaveMenu;
+	private JMenuItem loadItem, saveItem;
 	private static final int width = 800, height = 400;
-	
+
 	public ViewShop () {
 		super("PC-Hardware Shop Administration");
 		this.setPreferredSize(new Dimension(width, height));
@@ -51,23 +66,50 @@ public class ViewShop extends JFrame implements Observer {
 		screenHeight = screenSize.height;
 		this.setLocation((screenWidth - width) / 2, (screenHeight - height) / 2);
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.X_AXIS));
-		
+
 		productList = new JList<fpt.com.Product>();
 		productList.setCellRenderer(new ListProductRenderer());
 		productList.addListSelectionListener(new ListSelectionListener() {
-			
+
 			@Override
 			public void valueChanged(ListSelectionEvent arg0) {
 				updateDeleteButton();
 			}
 		});
 
+		noneRadio = new JRadioButtonMenuItem("None");
+		binRadio = new JRadioButtonMenuItem("Binary");
+		beanRadio = new JRadioButtonMenuItem("Beans");
+		xStreamRadio = new JRadioButtonMenuItem("XStream");
+		buttonGroup = new ButtonGroup();
+		buttonGroup.add(noneRadio);
+		buttonGroup.add(binRadio);
+		buttonGroup.add(beanRadio);
+		buttonGroup.add(xStreamRadio);
+		buttonGroup.setSelected(noneRadio.getModel(), true);
+		loadItem = new JMenuItem("Load");
+		saveItem = new JMenuItem("Save");
+		strategyMenu = new JMenu("Strategy");
+		strategyMenu.add(noneRadio);
+		strategyMenu.add(binRadio);
+		strategyMenu.add(beanRadio);
+		strategyMenu.add(xStreamRadio);
+		loadSaveMenu = new JMenu("Load/Save");
+		loadSaveMenu.add(loadItem);
+		loadSaveMenu.add(saveItem);
+		loadSaveMenu.setEnabled(false);
+		menubar = new JMenuBar();
+		menubar.add(strategyMenu);
+		menubar.add(loadSaveMenu);
+		this.setJMenuBar(menubar);
+
+
 		scrollPane = new JScrollPane(productList);
 		scrollPane.setPreferredSize(new Dimension((int)(width * 0.6), height));
 		this.add(scrollPane);
-		
+
 		CaretListener caretListener = new CaretListener() {
-			
+
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				JTextField textField = ((JTextField)e.getSource());
@@ -77,7 +119,7 @@ public class ViewShop extends JFrame implements Observer {
 				updateAddButton(false);
 			}
 		};
-		
+
 		addNameField = new JTextField();
 		addNameField.addCaretListener(caretListener);
 		addNameLabel = new JLabel("  Name:");
@@ -88,10 +130,10 @@ public class ViewShop extends JFrame implements Observer {
 		addNamePanel.add(addNameLabel);
 		addNamePanel.add(addNameField);
 		addNamePanel.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		addPriceField = new JTextField();
 		addPriceField.setInputVerifier(new InputVerifier() {
-			
+
 			@Override
 			public boolean verify(JComponent input) {
 				JTextField addPrice = (JTextField) input;
@@ -117,10 +159,10 @@ public class ViewShop extends JFrame implements Observer {
 		addPricePanel.add(addPriceLabel);
 		addPricePanel.add(addPriceField);
 		addPricePanel.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		addQuantityField = new JTextField();
 		addQuantityField.setInputVerifier(new InputVerifier() {
-			
+
 			@Override
 			public boolean verify(JComponent input) {
 				JTextField addQuantity = (JTextField) input;
@@ -146,43 +188,43 @@ public class ViewShop extends JFrame implements Observer {
 		addQuantityPanel.add(addQuantityLabel);
 		addQuantityPanel.add(addQuantityField);
 		addQuantityPanel.setBorder(BorderFactory.createEmptyBorder());
-		
+
 		addButton = new JButton("hinzufügen");
 		addButton.setFont(font);
 		addButton.setActionCommand("add");
 		addButton.setEnabled(false);
-		
+
 		addButtonPanel = new JPanel();
 		addButtonPanel.setLayout(new FlowLayout());
 		addButtonPanel.add(addButton);
-		
+
 		fieldPanel = new JPanel(new GridLayout(3, 1));
 		fieldPanel.add(addNamePanel);
 		fieldPanel.add(addPricePanel);
 		fieldPanel.add(addQuantityPanel);
-		
+
 		addAreaPanel = new JPanel();
 		addAreaPanel.setLayout(new BoxLayout(addAreaPanel, BoxLayout.Y_AXIS));
 		addAreaPanel.add(fieldPanel);
 		addAreaPanel.add(addButtonPanel);
-		
+
 		deleteButton = new JButton("ausgewähltes Produkt löschen");
 		deleteButton.setFont(font);
 		deleteButton.setEnabled(false);
 		deleteButton.setActionCommand("delete");
-		
+
 		deleteButtonPanel = new JPanel(new FlowLayout());
 		deleteButtonPanel.add(deleteButton);
-		
+
 		addLabel = new JLabel(" Produkt hinzufügen");
 		font = addLabel.getFont();
 		font = font.deriveFont(Font.BOLD, font.getSize() * 2);
 		addLabel.setFont(font);
-		
+
 		headingPanel = new JPanel();
 		headingPanel.setLayout(new GridLayout(1, 1));
 		headingPanel.add(addLabel);
-		
+
 		addPanel = new JPanel();
 		addPanel.setLayout(new BoxLayout(addPanel, BoxLayout.Y_AXIS));
 		addPanel.add(Box.createVerticalGlue());
@@ -192,21 +234,65 @@ public class ViewShop extends JFrame implements Observer {
 		addPanel.add(Box.createVerticalGlue());
 		addPanel.add(deleteButtonPanel);
 		this.add(addPanel);
-		
+
 		this.pack();
 		this.setVisible(true);
 		addNameField.requestFocus();
 	}
-	
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		productList.setListData(((ModelShop)arg0).toArray());
 	}
-	
+
+	public void addActionListener (ActionListener a) {
+		noneRadio.addActionListener(a);
+		binRadio.addActionListener(a);
+		beanRadio.addActionListener(a);
+		xStreamRadio.addActionListener(a);
+		loadItem.addActionListener(a);
+		saveItem.addActionListener(a);
+	}
+
+	public void addAddListener(final AddListener a) {
+		addButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				a.addPerfomed((Product)getNewProduct());
+			}
+		});
+	}
+
+	public void addDeleteListener(final DeleteListener a) {
+		deleteButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				a.deletePerfomed((Product)productList.getSelectedValue());
+			}
+		});
+	}
+
+	public void showError(String message)
+	{
+		JOptionPane.showConfirmDialog(this, message 
+				,"Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+	}
+
+	public void deactivateLoadSaveMenu()
+	{
+		loadSaveMenu.setEnabled(false);		
+	}
+	public void activateLoadSaveMenu()
+	{
+		loadSaveMenu.setEnabled(true);
+	}
+
 	private void updateDeleteButton () {
 		deleteButton.setEnabled(!productList.getSelectedValuesList().isEmpty());
 	}
-	
+
 	private void updateAddButton (boolean empty) {
 		if (empty) {
 			addButton.setEnabled(false);
@@ -219,16 +305,11 @@ public class ViewShop extends JFrame implements Observer {
 		}
 		addButton.setEnabled(false);
 	}
-	
-	public void addActionListener (ActionListener a) {
-		addButton.addActionListener(a);
-		deleteButton.addActionListener(a);
-	}
-	
+
 	public List<fpt.com.Product> getSelected () {
 		return productList.getSelectedValuesList();
 	}
-	
+
 	public fpt.com.Product getNewProduct () {
 		if (!"".equals(addNameField.getText()) && !"".equals(addPriceField)
 				&& !"".equals(addQuantityField)) {
@@ -243,11 +324,10 @@ public class ViewShop extends JFrame implements Observer {
 		}
 		return null;
 	}
-	
+
 	public void paint (Graphics g) {
 		scrollPane.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
 		addPanel.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
 		super.paint(g);
 	}
-	
 }
