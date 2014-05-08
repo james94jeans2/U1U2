@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -41,7 +42,8 @@ import listener.*;
 public class ViewShop extends JFrame implements Observer {
 
 	private static final long serialVersionUID = 7392956425233883188L;
-	private JList<fpt.com.Product> productList;
+	private JList<Product> productList;
+	private DefaultListModel<Product> productModel;
 	private JScrollPane scrollPane;
 	private JPanel addPanel, headingPanel, addNamePanel, addPricePanel, addQuantityPanel, 
 	addButtonPanel, fieldPanel, addAreaPanel, deleteButtonPanel;
@@ -67,8 +69,10 @@ public class ViewShop extends JFrame implements Observer {
 		this.setLocation((screenWidth - width) / 2, (screenHeight - height) / 2);
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.X_AXIS));
 
-		productList = new JList<fpt.com.Product>();
+		productList = new JList<Product>();
+		productModel = new DefaultListModel<Product>();
 		productList.setCellRenderer(new ListProductRenderer());
+		productList.setModel(productModel);
 		productList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -77,6 +81,8 @@ public class ViewShop extends JFrame implements Observer {
 			}
 		});
 
+		//Setzen der radioButtonItems und Hinzufügen der Komponenten zur Menubar
+		//Die Menubar wird dann gesetzt
 		noneRadio = new JRadioButtonMenuItem("None");
 		binRadio = new JRadioButtonMenuItem("Binary");
 		beanRadio = new JRadioButtonMenuItem("Beans");
@@ -103,13 +109,16 @@ public class ViewShop extends JFrame implements Observer {
 		menubar.add(loadSaveMenu);
 		this.setJMenuBar(menubar);
 
-
+		//ScrollPane mit der Productlist wird erstellt und hinzugefügt
 		scrollPane = new JScrollPane(productList);
 		scrollPane.setPreferredSize(new Dimension((int)(width * 0.6), height));
 		this.add(scrollPane);
 
+		//Listener für den Cursor damit Veränderungen erkannt werden können
 		CaretListener caretListener = new CaretListener() {
 
+			//Anonyme innere Klasse, welche das caretUpdate überschreibt mit passenden
+			//Funktionen
 			@Override
 			public void caretUpdate(CaretEvent e) {
 				JTextField textField = ((JTextField)e.getSource());
@@ -132,6 +141,8 @@ public class ViewShop extends JFrame implements Observer {
 		addNamePanel.setBorder(BorderFactory.createEmptyBorder());
 
 		addPriceField = new JTextField();
+		//Anonyme innere Klasse, die die Verify Methode überschreibt
+		//und die Konvertierung auf Double prüft
 		addPriceField.setInputVerifier(new InputVerifier() {
 
 			@Override
@@ -161,6 +172,8 @@ public class ViewShop extends JFrame implements Observer {
 		addPricePanel.setBorder(BorderFactory.createEmptyBorder());
 
 		addQuantityField = new JTextField();
+		//Anonyme innere Klasse, die die Verify Methode überschreibt
+		//und die Konvertierung auf Integer prüft
 		addQuantityField.setInputVerifier(new InputVerifier() {
 
 			@Override
@@ -241,10 +254,24 @@ public class ViewShop extends JFrame implements Observer {
 	}
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		productList.setListData(((ModelShop)arg0).toArray());
+	public void update(Observable o, Object arg) {
+		//Wenn das Model eine Änderung mitgeteilt hat, werden nicht vorhande
+		//Produkte der Liste hinzugefügt und gelöschte Objekte gegebenenfalls
+		//entfernt
+		if(arg.getClass().equals(AddEvent.class))
+		{
+			productModel.addElement(((AddEvent)arg).getProduct());
+		}
+		else
+		{
+			if(arg.getClass().equals(DeleteEvent.class))
+			{
+				productModel.removeElement(((DeleteEvent)arg).getProduct());
+			}
+		}
 	}
 
+	//Hinzufügen der Listener damit wir die Strategien wechseln können
 	public void addActionListener (ActionListener a) {
 		noneRadio.addActionListener(a);
 		binRadio.addActionListener(a);
@@ -254,7 +281,9 @@ public class ViewShop extends JFrame implements Observer {
 		saveItem.addActionListener(a);
 	}
 
+	//Methode für den AddListener
 	public void addAddListener(final AddListener a) {
+		//Anonyme innere Klasse zur Erstellung eines spezielleren ActionListeners
 		addButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -264,7 +293,10 @@ public class ViewShop extends JFrame implements Observer {
 		});
 	}
 
+
+	//Methode für den DeleteListener
 	public void addDeleteListener(final DeleteListener a) {
+		//Anonyme innere Klasse zur Erstellung eines spezielleren ActionListeners
 		deleteButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -274,12 +306,14 @@ public class ViewShop extends JFrame implements Observer {
 		});
 	}
 
+	//Methode zum anzeigen von geworfenen Exceptions
 	public void showError(String message)
 	{
 		JOptionPane.showConfirmDialog(this, message 
 				,"Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 	}
 
+	//Methoden zum aktivieren und deaktivieren des loadsavemenus
 	public void deactivateLoadSaveMenu()
 	{
 		loadSaveMenu.setEnabled(false);		
@@ -289,31 +323,32 @@ public class ViewShop extends JFrame implements Observer {
 		loadSaveMenu.setEnabled(true);
 	}
 
+	//Methode zur Prüfung ob der deleteButton ausgeblendet werden soll
 	private void updateDeleteButton () {
 		deleteButton.setEnabled(!productList.getSelectedValuesList().isEmpty());
 	}
 
+	//Methode zur Prüfung ob der addButton ausgeblendet werden soll
 	private void updateAddButton (boolean empty) {
 		if (empty) {
 			addButton.setEnabled(false);
 			return;
 		}
-		if (!"".equals(addNameField.getText()) && !"".equals(addPriceField.getText())
-				&& !"".equals(addQuantityField.getText())) {
+		if (textFieldsNotEmpty()) {
 			addButton.setEnabled(true);
 			return;
 		}
 		addButton.setEnabled(false);
 	}
 
-	public List<fpt.com.Product> getSelected () {
+	//Methode zur Rückgabe des ausgewählten Produktes
+	public List<Product> getSelected () {
 		return productList.getSelectedValuesList();
 	}
 
-	public fpt.com.Product getNewProduct () {
-		if (!"".equals(addNameField.getText()) && !"".equals(addPriceField)
-				&& !"".equals(addQuantityField)) {
-			fpt.com.Product product = new Product();
+	public Product getNewProduct () {
+		if (textFieldsNotEmpty()) {
+			Product product = new Product();
 			product.setName(addNameField.getText());
 			product.setPrice(Double.parseDouble(addPriceField.getText()));
 			product.setQuantity(Integer.parseInt(addQuantityField.getText()));
@@ -325,6 +360,17 @@ public class ViewShop extends JFrame implements Observer {
 		return null;
 	}
 
+	//Methode zur Prüfung ob die Textfiels leer sind weil das mehrmals geprüft wird
+	public Boolean textFieldsNotEmpty()
+	{
+		if (!"".equals(addNameField.getText()) && !"".equals(addPriceField.getText())
+				&& !"".equals(addQuantityField.getText()))
+		{
+			return true;
+		}
+		return false;
+	}
+	//Paint Methode
 	public void paint (Graphics g) {
 		scrollPane.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
 		addPanel.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
