@@ -3,7 +3,7 @@ package floje.u1u2;
 public class TestMain {
 
 	public static void main(String[] args) {
-		new ViewCostumer();
+//		new ViewCostumer();
 		ModelShop model = new ModelShop();
 		ControllerShop controller = new ControllerShop();
 		ViewShop view = new ViewShop();
