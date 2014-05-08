@@ -23,8 +23,6 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 	private BinaryStrategy binstrat = new BinaryStrategy();
 	private XMLStrategy xmlstrat = new XMLStrategy();
 	private XStreamStrategy xstreamstrat = new XStreamStrategy();
-	//Nur um den ViewCustomer zu testen
-	//ViewCustomer vCust;
 
 	//Hier werden Model und View verkn�pft und den Buttons werden
 	//Add- und DeleteListener hinzugef�gt
@@ -36,38 +34,6 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 		this.vShop.addAddListener(this);
 		this.vShop.addDeleteListener(this);
 		this.vShop.addActionListener(this);
-	}
-	//Nur Testweise um den ViewCustomer auszuprobieren
-	//	public void link(ModelShop mShop, ViewCustomer vCust){
-	//		this.mShop = mShop;
-	//		this.mShop.addObserver(vCust);
-	//
-	//		this.vCust = vCust;
-	//	}
-
-	//Methode zum Testen der Eingabe, f�ngt die jeweiligen Exceptions
-	//ab und liefert einen Fehler an die View
-	public Boolean testProductData(String price, String quantity)
-	{
-		try 
-		{
-			Double.parseDouble(price);
-		} catch (NumberFormatException e) {
-			vShop.showError(e.getMessage());
-			System.out.println("Invalid Input could not convert to Double");
-			return false;
-		}
-		try
-		{
-			Integer.parseInt(quantity);
-		}
-		catch (NumberFormatException e)
-		{
-			vShop.showError(e.getMessage());
-			System.out.println("Invalid Input could not convert to Integer");
-			return false;
-		}
-		return true;
 	}
 
 	//Hier wird die deletePerformed Methode implementiert welche das Interface 
@@ -100,6 +66,8 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 	}
 
 
+	//Implementierung der actionPerformed Methode für den ActionListener
+	//Diese Funktion ist für die Items der MenuBar zuständig
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		switch (((JMenuItem)event.getSource()).getText()) {
