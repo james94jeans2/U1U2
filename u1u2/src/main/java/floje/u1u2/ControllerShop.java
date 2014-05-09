@@ -11,7 +11,7 @@ import listener.*;
 
 import com.thoughtworks.xstream.io.StreamException;
 
-import strategies.BaseStrategy;
+import fpt.com.SerializableStrategy;
 import strategies.BinaryStrategy;
 import strategies.XMLStrategy;
 import strategies.XStreamStrategy;
@@ -19,10 +19,10 @@ import strategies.XStreamStrategy;
 public class ControllerShop implements ActionListener, AddListener, DeleteListener{
 	private ModelShop mShop;
 	private ViewShop vShop;
-	private BaseStrategy baseStrat = new BaseStrategy();
 	private BinaryStrategy binstrat = new BinaryStrategy();
 	private XMLStrategy xmlstrat = new XMLStrategy();
 	private XStreamStrategy xstreamstrat = new XStreamStrategy();
+	private SerializableStrategy baseStrat;
 
 	//Hier werden Model und View verkn�pft und den Buttons werden
 	//Add- und DeleteListener hinzugef�gt
@@ -69,25 +69,25 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 	public void actionPerformed(ActionEvent event) {
 		switch (((JMenuItem)event.getSource()).getText()) {
 		case "None":
-			baseStrat.setStrat(null);
+			baseStrat = null;
 			vShop.deactivateLoadSaveMenu();
 			System.out.println("None");
 			break;
 
 		case "Binary":
-			baseStrat.setStrat(binstrat);
+			baseStrat = binstrat;
 			vShop.activateLoadSaveMenu();
 			System.out.println("Binary");
 			break;
 
 		case "Beans":
-			baseStrat.setStrat(xmlstrat);
+			baseStrat = xmlstrat;
 			vShop.activateLoadSaveMenu();
 			System.out.println("Beans");
 			break;
 
 		case "XStream":
-			baseStrat.setStrat(xstreamstrat);
+			baseStrat = xstreamstrat;
 			vShop.activateLoadSaveMenu();
 			System.out.println("XStream");
 			break;
@@ -98,7 +98,7 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 				loadProduct=null;
 				try
 				{
-					loadProduct = baseStrat.readObject();
+					loadProduct = (Product)baseStrat.readObject();
 					if(loadProduct != null)
 					{
 						mShop.add(loadProduct);
