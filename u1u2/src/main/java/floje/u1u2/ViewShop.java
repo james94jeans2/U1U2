@@ -301,7 +301,7 @@ public class ViewShop extends JFrame implements Observer {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				a.deletePerfomed((Product)productList.getSelectedValue());
+				a.deletePerfomed(productList.getSelectedValuesList().toArray(new Product[0]));
 			}
 		});
 	}

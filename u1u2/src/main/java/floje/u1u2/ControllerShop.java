@@ -39,15 +39,12 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 	//Hier wird die deletePerformed Methode implementiert welche das Interface 
 	//DeleteListener fordert
 	@Override
-	public void deletePerfomed(Product product) {
-		if(product!=null)
+	public void deletePerfomed(Product[] product) {
+		for(Product p:product)
 		{
-			mShop.delete(product);
+			mShop.delete(p);
 		}
-		else 
-		{
-			vShop.showError("Product not valid or nothing selected");	
-		}
+
 	}
 
 	//Hier wird die addPerformed Methode implementiert welche das Interface
