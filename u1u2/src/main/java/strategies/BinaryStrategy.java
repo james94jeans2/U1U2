@@ -18,10 +18,12 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy, AutoCloseab
 	@Override
 	public Product readObject() throws IOException {
 		
-		if (fileInputStream == null) {
+		if (fileInputStream == null && fileOutputStream == null) {
 			fileInputStream = new FileInputStream ("products.ser");
 		}
-		
+		if (fileInputStream == null) {
+			throw new IOException("This strategy is allready writing to products.xml!");
+		}
 		if (objectInputStream == null) {
 			objectInputStream = new ObjectInputStream(fileInputStream);
 		}
@@ -40,10 +42,12 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy, AutoCloseab
 	@Override
 	public void writeObject(Product obj) throws IOException {
 		
-		if (fileOutputStream == null) {
+		if (fileOutputStream == null && fileInputStream == null) {
 			fileOutputStream = new FileOutputStream("products.ser");
 		}
-		
+		if (fileOutputStream == null) {
+			throw new IOException("This strategy is already reading from products.xml!");
+		}
 		if (objectOutputStream == null) {
 			objectOutputStream = new ObjectOutputStream(fileOutputStream);
 		}
@@ -57,21 +61,22 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy, AutoCloseab
 		
 		if (objectOutputStream != null) {
 			objectOutputStream.close();
-//			objectOutputStream = null;
+			objectOutputStream = null;
 		}
 		
 		if (objectInputStream != null) {
 			objectInputStream.close();
-//			objectInputStream = null;
+			objectInputStream = null;
 		}
 		
 		if (fileOutputStream != null) {
 			fileOutputStream.close();
-//			fileOutputStream = null;
+			fileOutputStream = null;
 		}
 		
 		if (fileInputStream != null) {
 			fileInputStream.close();
+			fileInputStream = null;
 		}
 		
 	}

@@ -36,9 +36,9 @@ public class XMLStrategy implements SerializableStrategy, AutoCloseable {
 		if (fileOutputStream == null && fileIntputStream == null) {
 			fileOutputStream = new FileOutputStream("products.xml");
 		}
-//		if (fileOutputStream == null) {
-//			throw new IOException("This strategy is already reading from products.xml!");
-//		}
+		if (fileOutputStream == null) {
+			throw new IOException("This strategy is already reading from products.xml!");
+		}
 		if (encoder == null) {
 			encoder = new XMLEncoder(fileOutputStream);
 		}
@@ -50,19 +50,19 @@ public class XMLStrategy implements SerializableStrategy, AutoCloseable {
 	public void close() throws IOException {
 		if (decoder != null) {
 			decoder.close();
-//			decoder = null;
+			decoder = null;
 		}
 		if (encoder != null) {
 			encoder.close();
-//			encoder = null;
+			encoder = null;
 		}
 		if (fileIntputStream != null) {
 			fileIntputStream.close();
-//			fileIntputStream = null;
+			fileIntputStream = null;
 		}
 		if (fileOutputStream != null) {
 			fileOutputStream.close();
-//			fileOutputStream = null;
+			fileOutputStream = null;
 		}
 	}
 
