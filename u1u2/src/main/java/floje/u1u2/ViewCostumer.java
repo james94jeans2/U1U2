@@ -75,6 +75,14 @@ public class ViewCostumer extends JFrame implements Observer{
 		        }
 				return false;
             }
+			
+			public Class<?> getColumnClass(int columnCount){
+				if (columnCount==3){
+					return Integer.class;
+				}
+				return String.class;
+				
+			}
         };
 		
 		
