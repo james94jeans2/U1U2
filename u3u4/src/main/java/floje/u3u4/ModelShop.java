@@ -1,4 +1,4 @@
-package floje.u1u2;
+package floje.u3u4;
 
 import java.util.Iterator;
 import java.util.Observable;
@@ -11,7 +11,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	
 
 	private static final long serialVersionUID = -9111970668561441955L;
-	private floje.u1u2.ProductList products = new floje.u1u2.ProductList();
+	private floje.u3u4.ProductList products = new floje.u3u4.ProductList();
 	
 
 	public ModelShop () {
@@ -29,7 +29,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	public boolean add(Product e) {
 		if( products.add(e)){
 			super.setChanged();
-			super.notifyObservers(new AddEvent(this, (floje.u1u2.Product)e));
+			super.notifyObservers(new AddEvent(this, (floje.u3u4.Product)e));
 			return true;
 		}
 		return false;
@@ -40,7 +40,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	public boolean delete(Product e) {
 		if( products.remove(e)){
 			super.setChanged();
-			super.notifyObservers(new DeleteEvent(this, (floje.u1u2.Product)e));
+			super.notifyObservers(new DeleteEvent(this, (floje.u3u4.Product)e));
 			return true;
 		}
 		return false;
