@@ -50,7 +50,7 @@ public class ViewShop extends JFrame implements Observer {
 	private JTextField addNameField, addPriceField, addQuantityField;
 	private JLabel addLabel, addNameLabel, addPriceLabel, addQuantityLabel;
 	private JButton addButton, deleteButton;
-	private JRadioButtonMenuItem noneRadio,binRadio,beanRadio,xStreamRadio;
+	private JRadioButtonMenuItem noneRadio,binRadio,beanRadio,xStreamRadio, jdbcRadio, openJPARadio;
 	private ButtonGroup buttonGroup;
 	private JMenuBar menubar;
 	private JMenu strategyMenu, loadSaveMenu;
@@ -87,11 +87,15 @@ public class ViewShop extends JFrame implements Observer {
 		binRadio = new JRadioButtonMenuItem("Binary");
 		beanRadio = new JRadioButtonMenuItem("Beans");
 		xStreamRadio = new JRadioButtonMenuItem("XStream");
+		jdbcRadio = new JRadioButtonMenuItem("JDBC Serialization");
+		openJPARadio = new JRadioButtonMenuItem("OpenJPA Serialization");
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(noneRadio);
 		buttonGroup.add(binRadio);
 		buttonGroup.add(beanRadio);
 		buttonGroup.add(xStreamRadio);
+		buttonGroup.add(jdbcRadio);
+		buttonGroup.add(openJPARadio);
 		buttonGroup.setSelected(noneRadio.getModel(), true);
 		loadItem = new JMenuItem("Load");
 		saveItem = new JMenuItem("Save");
@@ -100,6 +104,8 @@ public class ViewShop extends JFrame implements Observer {
 		strategyMenu.add(binRadio);
 		strategyMenu.add(beanRadio);
 		strategyMenu.add(xStreamRadio);
+		strategyMenu.add(jdbcRadio);
+		strategyMenu.add(openJPARadio);
 		loadSaveMenu = new JMenu("Load/Save");
 		loadSaveMenu.add(loadItem);
 		loadSaveMenu.add(saveItem);
