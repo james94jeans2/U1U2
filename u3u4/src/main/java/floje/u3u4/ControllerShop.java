@@ -91,6 +91,11 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 			vShop.activateLoadSaveMenu();
 			System.out.println("XStream");
 			break;
+			
+		case "OpenJPA Serialization":
+			//TODO setStrategie
+			vShop.activateLoadSaveMenu();
+			System.out.println("OpenJPA Serialization");
 
 		case "Load":
 			Product loadProduct;
