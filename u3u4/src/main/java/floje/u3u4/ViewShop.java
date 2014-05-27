@@ -87,14 +87,14 @@ public class ViewShop extends JFrame implements Observer {
 		binRadio = new JRadioButtonMenuItem("Binary");
 		beanRadio = new JRadioButtonMenuItem("Beans");
 		xStreamRadio = new JRadioButtonMenuItem("XStream");
-		//jdbcRadio = new JRadioButtonMenuItem("JDBC Serialization");
+		jdbcRadio = new JRadioButtonMenuItem("JDBC Serialization");
 		openJPARadio = new JRadioButtonMenuItem("OpenJPA Serialization");
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(noneRadio);
 		buttonGroup.add(binRadio);
 		buttonGroup.add(beanRadio);
 		buttonGroup.add(xStreamRadio);
-		//buttonGroup.add(jdbcRadio);
+		buttonGroup.add(jdbcRadio);
 		buttonGroup.add(openJPARadio);
 		buttonGroup.setSelected(noneRadio.getModel(), true);
 		loadItem = new JMenuItem("Load");
@@ -104,7 +104,7 @@ public class ViewShop extends JFrame implements Observer {
 		strategyMenu.add(binRadio);
 		strategyMenu.add(beanRadio);
 		strategyMenu.add(xStreamRadio);
-		//strategyMenu.add(jdbcRadio);
+		strategyMenu.add(jdbcRadio);
 		strategyMenu.add(openJPARadio);
 		loadSaveMenu = new JMenu("Load/Save");
 		loadSaveMenu.add(loadItem);
@@ -283,6 +283,8 @@ public class ViewShop extends JFrame implements Observer {
 		binRadio.addActionListener(a);
 		beanRadio.addActionListener(a);
 		xStreamRadio.addActionListener(a);
+		jdbcRadio.addActionListener(a);
+		openJPARadio.addActionListener(a);
 		loadItem.addActionListener(a);
 		saveItem.addActionListener(a);
 	}

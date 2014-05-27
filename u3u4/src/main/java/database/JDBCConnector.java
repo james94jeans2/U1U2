@@ -13,18 +13,12 @@ public class JDBCConnector {
 	ResultSet res = null;
 	PreparedStatement prep = null;
 
-	public void connect()
+	public void connect() throws SQLException
 	{
-		try
-		{
-			System.out.println("Verbindung wird aufgebaut");
-			connection = DriverManager.getConnection(
-					"jdbc:postgresql://java.is.uni-due.de/ws1011", "ws1011", "ftpw10");
-			System.out.println("Verbindung wurde aufgebaut");
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
+		System.out.println("Verbindung wird aufgebaut");
+		connection = DriverManager.getConnection(
+				"jdbc:postgresql://java.is.uni-due.de/ws1011", "ws1011", "ftpw10");
+		System.out.println("Verbindung wurde aufgebaut");
 	}
 
 	public void close() throws SQLException
@@ -74,12 +68,11 @@ public class JDBCConnector {
 	public long insert(String name, double price, int quantity) throws SQLException
 	{
 		String stmt2 = "INSERT INTO products (name, price, quantity) VALUES (?,?,?)";
-		PreparedStatement prep = connection.prepareStatement(
+		prep = connection.prepareStatement(
 				stmt2, PreparedStatement.RETURN_GENERATED_KEYS);
 		prep.setString(1, name);
 		prep.setDouble(2, price);
 		prep.setInt(3, quantity);
-		prep.setMaxRows(10);
 		prep.executeUpdate();
 		res = prep.getGeneratedKeys();
 		while(res.next())
@@ -95,7 +88,7 @@ public class JDBCConnector {
 	public void insert(Product product) throws SQLException
 	{
 		String stmt = "INSERT INTO products (name, price, quantity) VALUES (?,?,?)";
-		PreparedStatement prep = connection.prepareStatement(stmt);
+		prep = connection.prepareStatement(stmt);
 		prep.setString(1, product.getName());
 		prep.setDouble(2, product.getPrice());
 		prep.setInt(3, product.getQuantity());
@@ -107,9 +100,8 @@ public class JDBCConnector {
 	{
 		Product product = null;
 		String stmt = "SELECT id,name,price,quantity FROM products WHERE id=?";
-		PreparedStatement prep = connection.prepareStatement(stmt);
+		prep = connection.prepareStatement(stmt);
 		prep.setLong(1, productId);
-		prep.setMaxRows(1);
 		res = prep.executeQuery();
 		while(res.next())
 		{
@@ -123,5 +115,21 @@ public class JDBCConnector {
 		}
 		closeUsedData();
 		return null;
+	}
+
+	public long getLastId() throws SQLException
+	{
+		long id;
+		String stmt = "SELECT * FROM products WHERE id = (SELECT MAX(id) FROM products)";
+		prep = connection.prepareStatement(stmt);
+		res = prep.executeQuery();
+		while(res.next())
+		{
+			id = res.getLong("id");
+			closeUsedData();
+			return id;
+		}
+		closeUsedData();
+		return -1;
 	}
 }
