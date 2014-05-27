@@ -14,8 +14,6 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseable{
 
 	private XStream xstream;
-	private FileWriter fileWriter=null;
-	private FileReader fileReader=null;
 	private ObjectOutputStream objectOutputStream = null;
 	private ObjectInputStream objectInputStream = null;
 
@@ -33,16 +31,12 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 
 	@Override
 	public Product readObject() throws IOException{
-		//gucken ob strategy schon zum lesen verwendet wird
-		if(fileReader==null && fileWriter == null){
-			fileReader = new FileReader("products.xstream.xml");
-		}
-		//Error zurückgeben wenn schon verwendet (gilt fuer alle strategies)
-		if (fileReader == null) {
-			throw new IOException("This strategy is allready writing to products.xml!");
-		}
+		//		//Error zurückgeben wenn schon verwendet (gilt fuer alle strategies)
+		//		if (fileReader == null) {
+		//			throw new IOException("This strategy is allready writing to products.xml!");
+		//		}
 		if(objectInputStream==null){
-			objectInputStream = xstream.createObjectInputStream(fileReader);
+			objectInputStream = xstream.createObjectInputStream(new FileReader("products.xstream.xml"));
 		}
 		Product pr=null;
 		try {
@@ -57,15 +51,11 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 
 	@Override
 	public void writeObject(fpt.com.Product obj) throws IOException {
-
-		if(fileWriter==null && fileReader == null){
-			fileWriter = new FileWriter("products.xstream.xml");
-		}
-		if (fileWriter == null) {
-			throw new IOException("This strategy is already reading from products.xml!");
-		}
+		//		if (fileWriter == null) {
+		//			throw new IOException("This strategy is already reading from products.xml!");
+		//		}
 		if(objectOutputStream==null){
-			objectOutputStream = xstream.createObjectOutputStream(fileWriter,"waren");
+			objectOutputStream = xstream.createObjectOutputStream(new FileWriter("products.xstream.xml"),"waren");
 		}
 
 		objectOutputStream.writeObject(obj);
@@ -74,21 +64,19 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy,AutoCloseab
 
 	@Override
 	public void close() throws IOException {
-		if(objectOutputStream!=null){
-			objectOutputStream.close();
-			objectInputStream=null;
+		try
+		{
+			if(objectOutputStream!=null){
+				objectOutputStream.close();
+				objectInputStream=null;
+			}
 		}
-		if(objectInputStream!=null){
-			objectInputStream.close();
-			objectInputStream=null;
-		}
-		if(fileWriter!=null){
-			fileWriter.close();
-			fileWriter=null;
-		}
-		if(fileReader!=null){
-			fileReader.close();
-			fileReader=null;
+		finally
+		{
+			if(objectInputStream!=null){
+				objectInputStream.close();
+				objectInputStream=null;
+			}
 		}
 	}
 }
