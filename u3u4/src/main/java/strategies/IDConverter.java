@@ -29,15 +29,6 @@ public class IDConverter implements SingleValueConverter {
 
 	@Override
 	public String toString(Object arg0) {
-
-		String idString = String.valueOf(arg0);
-		int l = idString.length();
-		while(l<6){
-			idString="0"+idString;
-			l = idString.length();
-
-		}
-
-		return idString;
+		return String.format("%06d", arg0);
 	}
 }

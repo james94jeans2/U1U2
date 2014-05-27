@@ -1,6 +1,6 @@
 package strategies;
 
-import java.text.DecimalFormat;
+import java.util.Locale;
 
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 
@@ -15,16 +15,12 @@ public class PriceConverter implements SingleValueConverter {
 	@Override
 	public Object fromString(String arg0) {
 		return Double.parseDouble(arg0);
-		
+
 	}
 
 	@Override
 	public String toString(Object arg0) {
-		
-		DecimalFormat dec = new DecimalFormat("#0.00");
-		String string = dec.format(((double)arg0));
-		string=string.replaceAll(",",".");
-		return string;
+		return String.format(Locale.ENGLISH, "%.2f", arg0);
 	}
 
 }
