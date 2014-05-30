@@ -330,6 +330,15 @@ public class ViewShop extends JFrame implements Observer {
 	{
 		loadSaveMenu.setEnabled(true);
 	}
+	//Das gleiche nur fuer den Save-Button
+	public void deactivateSaveMenu()
+	{
+		saveItem.setEnabled(false);		
+	}
+	public void activateSaveMenu()
+	{
+		saveItem.setEnabled(true);
+	}
 
 	//Methode zur Prüfung ob der deleteButton ausgeblendet werden soll
 	private void updateDeleteButton () {
