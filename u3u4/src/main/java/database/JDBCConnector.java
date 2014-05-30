@@ -67,6 +67,9 @@ public class JDBCConnector {
 
 	public long insert(String name, double price, int quantity) throws SQLException
 	{
+		if (connection == null) {
+			connect();
+		}
 		String stmt2 = "INSERT INTO products (name, price, quantity) VALUES (?,?,?)";
 		prep = connection.prepareStatement(
 				stmt2, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -87,6 +90,9 @@ public class JDBCConnector {
 
 	public void insert(Product product) throws SQLException
 	{
+		if (connection == null) {
+			connect();
+		}
 		String stmt = "INSERT INTO products (name, price, quantity) VALUES (?,?,?)";
 		prep = connection.prepareStatement(stmt);
 		prep.setString(1, product.getName());
@@ -98,6 +104,9 @@ public class JDBCConnector {
 
 	public Product read(long productId) throws SQLException
 	{
+		if (connection == null) {
+			connect();
+		}
 		Product product = null;
 		String stmt = "SELECT id,name,price,quantity FROM products WHERE id=?";
 		prep = connection.prepareStatement(stmt);
