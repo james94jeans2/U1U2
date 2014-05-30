@@ -13,6 +13,7 @@ import listener.*;
 import com.thoughtworks.xstream.io.StreamException;
 
 import database.JDBCConnector;
+import database.OpenJPAConnector;
 import fpt.com.SerializableStrategy;
 import strategies.BinaryStrategy;
 import strategies.JDBCStrategy;
@@ -27,7 +28,7 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 	private XMLStrategy xmlstrat = new XMLStrategy();
 	private XStreamStrategy xstreamstrat = new XStreamStrategy();
 	private JDBCStrategy jdbcstrat = new JDBCStrategy(new JDBCConnector());
-	private OpenJpaStrategy openstrat = new OpenJpaStrategy();
+	private OpenJpaStrategy openstrat = new OpenJpaStrategy(new OpenJPAConnector());
 	private SerializableStrategy baseStrat;
 	//Hier werden Model und View verkn�pft und den Buttons werden
 	//Add- und DeleteListener hinzugef�gt
@@ -60,6 +61,23 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 		vShop.activateSaveMenu();
 	}
 
+	public void initializeDatabase()
+	{
+		if(baseStrat.equals(jdbcstrat))
+		{
+			try {
+				jdbcstrat.getConnector().connect();
+			} catch (SQLException e) {
+				vShop.showError(e.getMessage());
+				return;
+			}
+		}
+		if(baseStrat.equals(openstrat))
+		{
+			openstrat.getConnector().initialize();
+		}
+	}
+	
 	public void save()
 	{
 		for(fpt.com.Product saveProduct : mShop)
@@ -110,7 +128,6 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 				}
 			}				
 		} while(true);
-		//while (loadProduct != null);
 		try
 		{
 			baseStrat.close();
@@ -158,23 +175,18 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 			
 		case "JDBC Serialization":
 			baseStrat = jdbcstrat;
-			try {
-				jdbcstrat.getConnector().connect();
-				vShop.activateLoadSaveMenu();
-				System.out.println("JDBC Serialization");
-			} catch (SQLException e) {
-				vShop.showError(e.getMessage());
-			}
+			vShop.activateLoadSaveMenu();
+			System.out.println("JDBC Serialization");
 			break;
 
 		case "Load":
+			initializeDatabase();
 			load();
-			vShop.deactivateSaveMenu();
 			break;
 
 		case "Save":
+			initializeDatabase();
 			save();
-			vShop.deactivateSaveMenu();
 			break;
 
 		default:
