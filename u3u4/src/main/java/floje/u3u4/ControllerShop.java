@@ -154,6 +154,7 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 			baseStrat = openstrat;
 			vShop.activateLoadSaveMenu();
 			System.out.println("OpenJPA Serialization");
+			break;
 			
 		case "JDBC Serialization":
 			baseStrat = jdbcstrat;
