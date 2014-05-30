@@ -54,15 +54,8 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 	//AddListener fordert
 	@Override
 	public void addPerfomed(Product product) {
-		try
-		{
-			IDGenerator.generateIDForProduct(mShop, product);
-		}
-		catch(Exception e)
-		{
-			vShop.showError(e.getMessage());
-		}
 		mShop.add(product);
+		vShop.activateSaveMenu();
 	}
 
 	public void save()
@@ -173,12 +166,12 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 
 		case "Load":
 			load();
-			vShop.deactivateLoadSaveMenu();
+			vShop.deactivateSaveMenu();
 			break;
 
 		case "Save":
 			save();
-			vShop.deactivateLoadSaveMenu();
+			vShop.deactivateSaveMenu();
 			break;
 
 		default:
