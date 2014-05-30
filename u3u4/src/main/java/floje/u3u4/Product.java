@@ -1,20 +1,29 @@
 package floje.u3u4;
 
+import javax.persistence.*;
+
+@Entity()
+@Table(name = "products")
 public class Product implements fpt.com.Product {
 
 	private static final long serialVersionUID = -8282322185786801850L;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY, generator="products_SEQ") 	
 	private long id;
+	
 	private double price;
 	private int quantity;
 	private String name;
 	
 	@Override
+
 	public long getId() {
+
 		return id;
 	}
-
-	@Override
+	
 	public void setId(long id) {
+		
 		this.id = id;
 	}
 
