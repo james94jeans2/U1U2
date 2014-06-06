@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 
@@ -21,10 +22,13 @@ public class OpenJPAConnector {
 
 	public void initialize()
 	{
+		
 		factory = getWithoutConfig();
-		//factory = Persistence.createEntityManagerFactory(
-		//		"openjpa", System.getProperties());
-
+//		factory = Persistence.createEntityManagerFactory(
+//				"openjpa", System.getProperties());
+		
+		
+		
 		manager = factory.createEntityManager();
 		transaction = manager.getTransaction();
 		transaction.begin();
@@ -82,7 +86,7 @@ public class OpenJPAConnector {
 	
 	public EntityManagerFactory getWithoutConfig() {
 
-		//Hashmap für die Verbindungsdaten ohne Konfiguratiosdatei
+		//Hashmap fï¿½r die Verbindungsdaten ohne Konfiguratiosdatei
 		Map<String, String> map = new HashMap<String, String>();
 
 		map.put("openjpa.ConnectionURL",
@@ -93,7 +97,7 @@ public class OpenJPAConnector {
 		map.put("openjpa.RuntimeUnenhancedClasses", "supported");
 		map.put("openjpa.jdbc.SynchronizeMappings", "false");
 
-		//Finde alle Klassen, die persistent gemacht werden können sollen
+		//Finde alle Klassen, die persistent gemacht werden kï¿½nnen sollen
 		List<Class<?>> types = new ArrayList<Class<?>>();
 		types.add(Product.class);
 
