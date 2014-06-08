@@ -1,31 +1,37 @@
 package problem4;
 
 import java.util.ArrayList;
+
 import org.apache.commons.lang3.RandomUtils;
 
 public class Acquisition implements Runnable {
 
-	//Die Liste mit unseren Kassen
+	//Die Liste mit unseren Kassen und den zugehörigen Threads
 	private ArrayList<Cashpoint> cashpoints;
+	private ArrayList<Thread> threads;
+	//Zähler für alle Kunden
+	private int customerCount;
+	//die Bilanz, die alle kassen verwaltet
+	private Balance bilanz;
 
 	//Der Konstruktor für die Akquise
 	public Acquisition () {
 		//Es wird eine neue Bilanz erstellt die sich nachher alle Kassenobjekte teilen
-		Balance balance = new Balance();
+		bilanz = new Balance();
 		//Die Liste der Kassen wird initialisiert
 		cashpoints = new ArrayList<Cashpoint>();
+		threads = new ArrayList<Thread>();
 		//Die Liste wird mit Kassenobjekten gefüllt
 		for(int i = 0;i<6;i++)
 		{
-			cashpoints.add(new Cashpoint(i+1, balance));
+			cashpoints.add(new Cashpoint(i+1, bilanz));
 		}
 	}
 
 	@Override
 	public void run() {
 		System.out.println("Kunden Akquise gestartet!");
-		//Zähler für alle Kunden
-		int customerCount = 0;
+		customerCount = 0;
 		//Solange die längste Schlange weniger als 8 Kunden hat wird akquiriert
 		while (getLongestQueueLength() < 8) {
 			//Variable für die Arbeitszeit der Akquise
@@ -47,6 +53,13 @@ public class Acquisition implements Runnable {
 		//Kommen wir hier an haben wir irgendwo 8 Kunden anstehen und beenden die Akquise
 		//und damit endet der Thread
 		System.out.println("Kunden Aquise abgeschlossen!");
+		for (Thread thread : threads) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private int getLongestQueueLength () {
@@ -114,6 +127,10 @@ public class Acquisition implements Runnable {
 				//Die Methode wird hier verlassen da der Kunde gut untergebracht wurde
 				return;
 			}
+			//Wenn schon 6 kassen auf sind, wird nochmal nach der kürzesten schlange
+			//gesucht und der kunde dann dort hinzugefügt
+			cash = lowestQueue();
+			cash.addCustomer(id);
 		}
 	}
 
@@ -155,8 +172,20 @@ public class Acquisition implements Runnable {
 		Thread thread = new Thread(cash);
 		//Dann wird der Name gesetzt + Id
 		thread.setName("Kasse " + cash.getId());
+		threads.add(thread);
 		//Der Thread wird gestartet
 		//start() != run() -> keine Nebenläufigkeit durch run()!
 		thread.start();
 	}
+	
+	//für statistische zwecke
+	public int getCustomerCount () {
+		return customerCount;
+	}
+	
+	//für statistische zwecke
+	public Balance getBalance () {
+		return bilanz;
+	}
+	
 }

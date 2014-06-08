@@ -80,16 +80,23 @@ public class Balance {
 				//Dann wird sortiert, läuft auh synchronized, weil wir von hier aus aufrufen
 				sort();
 				//Hier steht nur ein wenig Ausgabe...
-				System.out.println("----------");
-				System.out.println("Bilanz:");
-				for (int i = 0; i < bilanz.size(); ++i) {
-					Pair<Integer, Double> p = bilanz.get(i);
-					System.out.println((i+1) + ". - Kasse " + p.getKey() + " : " + p.getValue());
-				}
-				System.out.println("----------");
+				System.out.println(this);
 				//... und dann verlassen wir die Methode
 				return;
 			}
 		}
+	}
+	
+	//Hier steht nur ein wenig Ausgabe...
+	public String toString () {
+		StringBuilder stringReturn = new StringBuilder();
+		stringReturn.append("----------\n");
+		stringReturn.append("Bilanz:\n");
+		for (int i = 0; i < bilanz.size(); ++i) {
+			Pair<Integer, Double> p = bilanz.get(i);
+			stringReturn.append((i+1) + ". - Kasse " + p.getKey() + " : " + p.getValue() + "\n");
+		}
+		stringReturn.append("----------");
+		return stringReturn.toString();
 	}
 }
