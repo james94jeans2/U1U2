@@ -50,7 +50,6 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 		{
 			mShop.delete(p);
 		}
-
 	}
 
 	//Hier wird die addPerformed Methode implementiert welche das Interface
@@ -63,11 +62,15 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 
 	public void initializeDatabase()
 	{
+		//Je nach Strategie eine Verbindung aufbauen
 		if(baseStrat.equals(jdbcstrat))
 		{
-			try {
+			try 
+			{
 				jdbcstrat.getConnector().connect();
-			} catch (SQLException e) {
+			}
+			catch (SQLException e)
+			{
 				vShop.showError(e.getMessage());
 				return;
 			}
@@ -77,9 +80,10 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 			openstrat.getConnector().initialize();
 		}
 	}
-	
+
 	public void save()
 	{
+		//Ruft für jedes Produkt die writeObject Methode zum Serialisieren auf
 		for(fpt.com.Product saveProduct : mShop)
 		{
 			try
@@ -93,6 +97,7 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 		}
 		try
 		{
+			//Danach wird die Strategie geschlossen
 			baseStrat.close();
 		}
 		catch(IOException ex)
@@ -114,6 +119,7 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 					mShop.add(loadProduct);
 				}
 			}
+			//Durch dieses catch brechen wir ab falls keine Produkte mehr gelesen werden können
 			catch(IOException | ArrayIndexOutOfBoundsException | StreamException ex)
 			{
 				if(ex.getClass().equals(EOFException.class)||
@@ -130,6 +136,7 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 		} while(true);
 		try
 		{
+			//Strategie wird geschlossen
 			baseStrat.close();
 		}
 		catch(IOException ex)
@@ -166,13 +173,13 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 			vShop.activateLoadSaveMenu();
 			System.out.println("XStream");
 			break;
-			
+
 		case "OpenJPA Serialization":
 			baseStrat = openstrat;
 			vShop.activateLoadSaveMenu();
 			System.out.println("OpenJPA Serialization");
 			break;
-			
+
 		case "JDBC Serialization":
 			baseStrat = jdbcstrat;
 			vShop.activateLoadSaveMenu();

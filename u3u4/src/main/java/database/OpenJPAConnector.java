@@ -16,27 +16,31 @@ import floje.u3u4.Product;
 
 public class OpenJPAConnector {
 
+	//Unsere Entity - "Helfer"
 	EntityManagerFactory factory;
 	EntityManager manager; 
 	EntityTransaction transaction;
 
 	public void initialize()
 	{
-		
+		//Erstellung ohne Konfig oder mit Persistence.xml
 		factory = getWithoutConfig();
 //		factory = Persistence.createEntityManagerFactory(
 //				"openjpa", System.getProperties());
 		
 		
-		
+		//Erstellung von manager und transaction
 		manager = factory.createEntityManager();
 		transaction = manager.getTransaction();
+		//Starten der Transaktion -> Wird an anderer Stelle geschlossen
 		transaction.begin();
 	}
 
 	public void close()
 	{
+		//Wir machen einen Commit
 		transaction.commit();
+		//Und schliessen danach Manager und Factory
 		if(manager!=null)
 		{
 			manager.close();
@@ -50,7 +54,9 @@ public class OpenJPAConnector {
 
 	public void write(Product product)
 	{
+		//Dem Produkt wird der Standardwert "0" gegeben damit wir serialisieren dürfen
 		product.setId(0);
+		//Danach wird mit persist in die Datenbank geschrieben
 		manager.persist(product);
 	}
 
@@ -59,33 +65,43 @@ public class OpenJPAConnector {
 		String stmt = String.format("SELECT p FROM Product p WHERE p.id=%d", id);
 		@SuppressWarnings("unchecked")
 		List<Product> result = (List<Product>)manager.createQuery(stmt).getResultList();
+		//Wenn die Liste nicht leer ist gibt das erste(und wahrscheinlich einzige wenn die 
+		//Implementierung der Datenbank funktioniert) Produkt aus
 		if(!result.isEmpty())
 		{
 			return result.get(0);
 		}
 		else
 		{
+			//Gibt es kein produkt mit dieser Id gibt "null" zurück
 			return null;
 		}
 	}
 
 	public long getLastId()
 	{
+		
+		//Variable zur Speicherung der id
 		long id;
+		//Vielleicht nicht das beste Statement aber es funktioniert
 		String stmt = "SELECT p FROM Product p WHERE p.id = (SELECT MAX(p2.id) FROM Product p2)";
 		//String stmt = "SELECT p FROM Product p ORDER BY p.id DESC";
 		@SuppressWarnings("unchecked")
 		List<Product> result = (List<Product>)manager.createQuery(stmt).getResultList();
 		if(!result.isEmpty())
 		{
+			//Gib die id zurück
 			id = result.get(0).getId();
 			return id;
 		}
+		//oder gib -1 aus wenn es einen Fehler gab
 		return -1;
 	}
 	
 	public EntityManagerFactory getWithoutConfig() {
 
+		//Hier wird alles hardgecoded was auch in der Persistence.xml stehen kann
+		
 		//Hashmap f�r die Verbindungsdaten ohne Konfiguratiosdatei
 		Map<String, String> map = new HashMap<String, String>();
 
