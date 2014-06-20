@@ -26,9 +26,11 @@ public class ViewCostumer extends JFrame implements Observer{
 	private  JScrollPane scrollPane;
 	private JPanel buttonPanel;
 	private JList<fpt.com.Order> orderList; 
+	private ModelShop model;
 	
-	public ViewCostumer(){
+	public ViewCostumer(ModelShop model){
 		super("PC-Hardware Shop Costumer");
+		this.model = model;
 		this.setPreferredSize(new Dimension(width, height));
 		this.setMinimumSize(new Dimension(width, height));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -38,20 +40,10 @@ public class ViewCostumer extends JFrame implements Observer{
 		screenWidth = screenSize.width;
 		screenHeight = screenSize.height;
 		this.setLocation(((screenWidth - width) / 2), ((screenHeight - height) / 2)+height);
-		Order order=new Order();
-		for(int j =0;j<2;j++){
-			Product product = new Product();
-			product.setPrice(5);
-			product.setQuantity(4);
-			product.setName(""+j);
-			order.add(product);
-			
-		}
 				
 		orderList = new JList<fpt.com.Order>();
 		
 		orderList.setCellRenderer(new ListOrderRenderer());
-		orderList.setListData(new Order[]{order});
 		leftSide = new JScrollPane(orderList);		
 		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
 		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
@@ -117,17 +109,17 @@ public class ViewCostumer extends JFrame implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-//		fpt.com.Product[] product = ((ModelShop)arg).toArray();
-//		data=new Object[((ModelShop)arg).size()][4];
-//		for(int i=0;i<((ModelShop)arg).size();i++){
-//			
-//			
-//			data[i][0]=product[i].getName();
-//			data[i][1]=product[i].getPrice();
-//			data[i][2]=product[i].getQuantity();							
-//			
-//		}
-		
+		fpt.com.Product[] product = model.toArray();
+		data=new Object[model.size()][4];
+		for(int i=0;i<product.length;i++){
+			
+			
+			data[i][0]=product[i].getName();
+			data[i][1]=product[i].getPrice();
+			data[i][2]=product[i].getQuantity();							
+			
+		}
+		productTable.repaint();
 	}
 	
 	public void paint (Graphics g) {
