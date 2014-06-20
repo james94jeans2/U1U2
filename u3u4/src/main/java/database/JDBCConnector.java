@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import floje.u3u4.Product;
+import floje.Product;
 
 public class JDBCConnector {
 	//Variablen die wir brauchen

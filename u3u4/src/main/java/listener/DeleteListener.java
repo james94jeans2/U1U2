@@ -1,6 +1,6 @@
 package listener;
 
-import floje.u3u4.Product;
+import floje.Product;
 
 
 //Das DeleteListener interface zum l�schen

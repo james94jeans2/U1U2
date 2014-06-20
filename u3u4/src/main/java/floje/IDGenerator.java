@@ -1,4 +1,4 @@
-package floje.u3u4;
+package floje;
 
 public class IDGenerator {
 	

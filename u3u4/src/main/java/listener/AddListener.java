@@ -1,6 +1,6 @@
 package listener;
 
-import floje.u3u4.Product;
+import floje.Product;
 
 //Das AddListener interface zum Hinzuf�gen
 public interface AddListener {

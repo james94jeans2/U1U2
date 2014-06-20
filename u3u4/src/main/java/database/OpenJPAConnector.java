@@ -12,7 +12,7 @@ import javax.persistence.Persistence;
 
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 
-import floje.u3u4.Product;
+import floje.Product;
 
 public class OpenJPAConnector {
 
