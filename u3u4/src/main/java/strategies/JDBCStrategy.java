@@ -46,7 +46,7 @@ public class JDBCStrategy implements SerializableStrategy{
 	@Override
 	public void writeObject(Product obj) throws IOException {
 		try {
-			connector.insert((floje.u3u4.Product)obj);
+			connector.insert((floje.Product)obj);
 		} catch (SQLException e) {
 			throw new IOException(e.getMessage());
 		}

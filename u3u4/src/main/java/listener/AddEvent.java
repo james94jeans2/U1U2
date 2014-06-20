@@ -2,7 +2,7 @@ package listener;
 
 import java.util.EventObject;
 
-import floje.u3u4.Product;
+import floje.Product;
 
 public class AddEvent extends EventObject {
 

@@ -41,7 +41,7 @@ public class OpenJpaStrategy implements fpt.com.SerializableStrategy {
 
 	@Override
 	public void writeObject(Product obj) throws IOException {
-		connector.write((floje.u3u4.Product)obj);
+		connector.write((floje.Product)obj);
 	}
 
 	@Override

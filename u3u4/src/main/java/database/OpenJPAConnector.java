@@ -8,11 +8,10 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 
-import floje.u3u4.Product;
+import floje.Product;
 
 public class OpenJPAConnector {
 
