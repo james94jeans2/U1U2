@@ -14,6 +14,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class ViewCostumer extends JFrame implements Observer{
 	
@@ -27,6 +30,11 @@ public class ViewCostumer extends JFrame implements Observer{
 	private JPanel buttonPanel;
 	private JList<fpt.com.Order> orderList; 
 	private ModelShop model;
+	DefaultTableModel modelt;
+	private String[] columnNames = {"Name",
+            "Preis",
+            "MaxCount",
+            "OrderCount"};
 	
 	public ViewCostumer(ModelShop model){
 		super("PC-Hardware Shop Costumer");
@@ -49,39 +57,19 @@ public class ViewCostumer extends JFrame implements Observer{
 		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
 		rightSide.setLayout(new BorderLayout());;
 		
-		String[] columnNames = {"Name",
-                "Preis",
-                "MaxCount",
-                "OrderCount"};
 
 		
-		data=new Object[0][0];
+		data=new Object[0][4];
 
 		
-		productTable=new JTable(data,columnNames){
-			private static final long serialVersionUID = -4503641078531367197L;
+		productTable=new JTable(consModel());
 
-			public boolean isCellEditable(int x, int y) {
-				if(y==3){
-		        	return true;
-		        }
-				return false;
-            }
-			
-			public Class<?> getColumnClass(int columnCount){
-				if (columnCount==3){
-					return Integer.class;
-				}
-				return String.class;
-				
-			}
-        };
 		
 		
 		scrollPane = new JScrollPane(productTable);
 		
 		productTable.setFillsViewportHeight(true);
-		//productTable.setEditingColumn(4);
+
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BorderLayout());
@@ -111,15 +99,21 @@ public class ViewCostumer extends JFrame implements Observer{
 	public void update(Observable o, Object arg) {
 		fpt.com.Product[] product = model.toArray();
 		data=new Object[model.size()][4];
+		
+		
 		for(int i=0;i<product.length;i++){
 			
 			
 			data[i][0]=product[i].getName();
 			data[i][1]=product[i].getPrice();
-			data[i][2]=product[i].getQuantity();							
+			data[i][2]=product[i].getQuantity();
+										
 			
-		}
-		productTable.repaint();
+		}		
+		productTable.setModel(consModel());	
+		
+		System.out.println("update");
+		
 	}
 	
 	public void paint (Graphics g) {
@@ -128,6 +122,29 @@ public class ViewCostumer extends JFrame implements Observer{
 		super.paint(g);
 	}
 	
+	private DefaultTableModel consModel(){
+		modelt = new DefaultTableModel(data,columnNames){
+			private static final long serialVersionUID = -4503641078531367197L;
+
+			public boolean isCellEditable(int x, int y) {
+				if(y==3){
+		        	return true;
+		        }
+				return false;
+            }
+			
+			public Class<?> getColumnClass(int columnCount){
+				if (columnCount==3){
+					return Integer.class;
+				}
+				return String.class;
+				
+			}
+			
+			
+		};
+		return modelt;
+	}
 
 
 }
