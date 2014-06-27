@@ -220,8 +220,12 @@ public class ViewCostumer extends JFrame implements Observer{
 					e1.printStackTrace();
 				}
 				
-				updateDate(new String(inpack.getData()));
-				
+				final String ding = new String(inpack.getData()).trim();
+				SwingUtilities.invokeLater(new Runnable() {
+				    public void run() {
+				      date.setText(ding);
+				    }
+				  });
 			}			
 			
 		});
