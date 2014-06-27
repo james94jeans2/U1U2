@@ -23,7 +23,7 @@ public class UDPServer {
 				serverSocket.receive(receivePacket);
 				String sentence = new String( receivePacket.getData());
 				System.out.println("RECEIVED: " + sentence);
-				if(sentence.equals("DATE")){
+				if(sentence.equals("DATE:")){
 					datum = new Date();
 					tmp = ""+ datumfor.format( datum.getTime());
 					
