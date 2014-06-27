@@ -14,6 +14,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TimerTask;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -190,21 +191,18 @@ public class ViewCostumer extends JFrame implements Observer{
 		final byte buffer[];
 		buffer = command.getBytes();
 		final DatagramPacket packet = new DatagramPacket(buffer,buffer.length, ia, 6667);
-		Timer timer = new Timer(1000, new ActionListener(){
-
+		java.util.Timer timer = new java.util.Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void run() {
 				try {
 					datagramm.send(packet);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				
-			}			
-			
-		});
-		timer.setRepeats(true);
-		timer.start();
+			}
+		}, 0, 1000);
 	}
 
 	private void abrufenDatum() throws SocketException{
