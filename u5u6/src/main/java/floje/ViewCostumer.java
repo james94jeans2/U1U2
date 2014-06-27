@@ -25,9 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 public class ViewCostumer extends JFrame implements Observer{
 	
@@ -96,7 +94,7 @@ public class ViewCostumer extends JFrame implements Observer{
 		
 		buttonPanel.add(ok, BorderLayout.WEST);
 		date=new JLabel("");
-		buttonPanel.add(date);
+		buttonPanel.add(date, BorderLayout.CENTER);
 		
 		
 		
@@ -120,7 +118,6 @@ public class ViewCostumer extends JFrame implements Observer{
 			abfrageDatum();
 			abrufenDatum();
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -200,7 +197,6 @@ public class ViewCostumer extends JFrame implements Observer{
 				try {
 					datagramm.send(packet);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				
@@ -223,7 +219,6 @@ public class ViewCostumer extends JFrame implements Observer{
 				try {
 					datagramm.receive(inpack);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				

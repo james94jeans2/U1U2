@@ -10,7 +10,7 @@ public class UDPServer {
 	
 	public static void main(String args[]) throws Exception{
 		DatagramSocket serverSocket = new DatagramSocket(6667);
-		byte[] buf = new byte[4];
+		byte[] buf = new byte[5];
 		byte[] sendData = new byte[19];
 		Date datum = new Date();
 		SimpleDateFormat datumfor = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
