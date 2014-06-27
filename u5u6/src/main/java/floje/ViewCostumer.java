@@ -4,16 +4,27 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -35,6 +46,11 @@ public class ViewCostumer extends JFrame implements Observer{
             "Preis",
             "MaxCount",
             "OrderCount"};
+	private DatagramSocket datagramm;
+	private final JLabel date;
+	private JButton ok;
+	
+	
 	
 	public ViewCostumer(ModelShop model){
 		super("PC-Hardware Shop Costumer");
@@ -74,11 +90,13 @@ public class ViewCostumer extends JFrame implements Observer{
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BorderLayout());
 		
-		JButton ok = new JButton("ok");
+		ok = new JButton("ok");
 		ok.setPreferredSize(new Dimension(100,70));
 		
 		
 		buttonPanel.add(ok, BorderLayout.WEST);
+		date=new JLabel("");
+		buttonPanel.add(date);
 		
 		
 		
@@ -92,6 +110,22 @@ public class ViewCostumer extends JFrame implements Observer{
 		this.pack();
 		
 		this.setVisible(true);
+		try {
+			datagramm = new DatagramSocket();
+		} catch (SocketException e) {
+			datagramm = null;
+			e.printStackTrace();
+		}
+		try {
+			abfrageDatum();
+			abrufenDatum();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 		
 	}
 
@@ -146,5 +180,77 @@ public class ViewCostumer extends JFrame implements Observer{
 		return modelt;
 	}
 
+	private void abfrageDatum() throws SocketException{
+		InetAddress ia  = null;
+		try {
+			ia = InetAddress.getByName("localhost");
+		} catch (UnknownHostException e2) {
+			
+			e2.printStackTrace();
+		}
+		System.out.println("Anfrage");
+		final String command = "DATE:";
+		final byte buffer[];
+		buffer = command.getBytes();
+		final DatagramPacket packet = new DatagramPacket(buffer,buffer.length, ia, 6667);
+		Timer timer = new Timer(1000, new ActionListener(){
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					datagramm.send(packet);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}			
+			
+		});
+		timer.setRepeats(true);
+		timer.start();
+	}
+
+	private void abrufenDatum() throws SocketException{
+		System.out.println("Abfrage");
+		System.out.println(""+datagramm.getPort());
+		Timer timer = new Timer(1000, new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				byte answer[] = new byte[1024];
+				DatagramPacket inpack = new DatagramPacket(answer, answer.length);
+				try {
+					datagramm.receive(inpack);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				updateDate(new String(inpack.getData()));
+				
+			}			
+			
+		});
+		timer.setRepeats(true);
+		timer.start();
+	}
+	
+	private void updateDate(final String txt){
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run() {
+		      date.setText(txt);;
+		    }
+		  });
+	}
+	
+	public JTable getTable(){
+		return productTable;
+	}
+	
+	public void addOKListener(ActionListener al){
+		ok.addActionListener(al);;
+	}
+
+	
 }
