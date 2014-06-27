@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -15,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.TimerTask;
+import java.util.Timer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -25,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 
 public class ViewCostumer extends JFrame implements Observer{
@@ -191,7 +190,7 @@ public class ViewCostumer extends JFrame implements Observer{
 		final byte buffer[];
 		buffer = command.getBytes();
 		final DatagramPacket packet = new DatagramPacket(buffer,buffer.length, ia, 6667);
-		java.util.Timer timer = new java.util.Timer();
+		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
@@ -200,6 +199,7 @@ public class ViewCostumer extends JFrame implements Observer{
 					datagramm.send(packet);
 				} catch (IOException e1) {
 					e1.printStackTrace();
+					
 				}
 			}
 		}, 0, 1000);
@@ -208,10 +208,35 @@ public class ViewCostumer extends JFrame implements Observer{
 	private void abrufenDatum() throws SocketException{
 		System.out.println("Abfrage");
 		System.out.println(""+datagramm.getPort());
-		Timer timer = new Timer(1000, new ActionListener(){
-
+		//Swingtimer blockiert Swing gui thread gedönse
+//		Timer timer = new Timer(1000, new ActionListener(){
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				byte answer[] = new byte[1024];
+//				DatagramPacket inpack = new DatagramPacket(answer, answer.length);
+//				try {
+//					datagramm.receive(inpack);
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+//				
+//				final String ding = new String(inpack.getData()).trim();
+//				SwingUtilities.invokeLater(new Runnable() {
+//				    public void run() {
+//				      date.setText(ding);
+//				    }
+//				  });
+//			}			
+//			
+//		});
+//		timer.setRepeats(true);
+//		timer.start();
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void run() {
 				byte answer[] = new byte[1024];
 				DatagramPacket inpack = new DatagramPacket(answer, answer.length);
 				try {
@@ -226,11 +251,9 @@ public class ViewCostumer extends JFrame implements Observer{
 				      date.setText(ding);
 				    }
 				  });
-			}			
-			
-		});
-		timer.setRepeats(true);
-		timer.start();
+				
+			}
+		}, 0, 1000);
 	}
 	
 	private void updateDate(final String txt){
