@@ -27,6 +27,9 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
+import listener.AddEvent;
+import listener.DeleteEvent;
+
 public class ViewCostumer extends JFrame implements Observer{
 	
 	private static final long serialVersionUID = -5399845903830908290L;
@@ -47,6 +50,7 @@ public class ViewCostumer extends JFrame implements Observer{
 	private DatagramSocket datagramm;
 	private final JLabel date;
 	private JButton ok;
+	private ProductList products;
 	
 	
 	
@@ -62,6 +66,7 @@ public class ViewCostumer extends JFrame implements Observer{
 		screenWidth = screenSize.width;
 		screenHeight = screenSize.height;
 		this.setLocation(((screenWidth - width) / 2), ((screenHeight - height) / 2)+height);
+		products = new ProductList();
 				
 		orderList = new JList<fpt.com.Order>();
 		
@@ -128,9 +133,24 @@ public class ViewCostumer extends JFrame implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		fpt.com.Product[] product = model.toArray();
+		//Wenn das Model eine Änderung mitgeteilt hat, werden nicht vorhande
+		//Produkte der Liste hinzugefügt und gelöschte Objekte gegebenenfalls
+		//entfernt
+		if(arg.getClass().equals(AddEvent.class))
+		{
+			products.add(((AddEvent)arg).getProduct());
+		}
+		else
+		{
+			if(arg.getClass().equals(DeleteEvent.class))
+			{
+				products.remove(((DeleteEvent)arg).getProduct());
+			}
+		}
+
 		data=new Object[model.size()][4];
 		
+		Product[] product = products.toArray(new Product[0]);
 		
 		for(int i=0;i<product.length;i++){
 			
@@ -142,9 +162,6 @@ public class ViewCostumer extends JFrame implements Observer{
 			
 		}		
 		productTable.setModel(consModel());	
-		
-		System.out.println("update");
-		
 	}
 	
 	public void paint (Graphics g) {
@@ -208,30 +225,6 @@ public class ViewCostumer extends JFrame implements Observer{
 	private void abrufenDatum() throws SocketException{
 		System.out.println("Abfrage");
 		System.out.println(""+datagramm.getPort());
-		//Swingtimer blockiert Swing gui thread gedönse
-//		Timer timer = new Timer(1000, new ActionListener(){
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				byte answer[] = new byte[1024];
-//				DatagramPacket inpack = new DatagramPacket(answer, answer.length);
-//				try {
-//					datagramm.receive(inpack);
-//				} catch (IOException e1) {
-//					e1.printStackTrace();
-//				}
-//				
-//				final String ding = new String(inpack.getData()).trim();
-//				SwingUtilities.invokeLater(new Runnable() {
-//				    public void run() {
-//				      date.setText(ding);
-//				    }
-//				  });
-//			}			
-//			
-//		});
-//		timer.setRepeats(true);
-//		timer.start();
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
 			
@@ -256,14 +249,6 @@ public class ViewCostumer extends JFrame implements Observer{
 		}, 0, 1000);
 	}
 	
-	private void updateDate(final String txt){
-		SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
-		      date.setText(txt);;
-		    }
-		  });
-	}
-	
 	public JTable getTable(){
 		return productTable;
 	}
@@ -272,5 +257,8 @@ public class ViewCostumer extends JFrame implements Observer{
 		ok.addActionListener(al);;
 	}
 
+	public void addActionListener (ActionListener listener) {
+		ok.addActionListener(listener);
+	}
 	
 }

@@ -24,7 +24,6 @@ import strategies.XStreamStrategy;
 public class ControllerShop implements ActionListener, AddListener, DeleteListener{
 	private ModelShop mShop;
 	private ViewShop vShop;
-	private ViewCostumer vClient;
 	private BinaryStrategy binstrat = new BinaryStrategy();
 	private XMLStrategy xmlstrat = new XMLStrategy();
 	private XStreamStrategy xstreamstrat = new XStreamStrategy();
@@ -43,13 +42,6 @@ public class ControllerShop implements ActionListener, AddListener, DeleteListen
 		this.vShop.addActionListener(this);
 	}
 	
-	public void link(ModelShop mShop, ViewCostumer vCostumer){
-		this.mShop = mShop;
-		this.mShop.addObserver(vCostumer);
-
-		this.vClient = vCostumer;
-	}
-
 	//Hier wird die deletePerformed Methode implementiert welche das Interface 
 	//DeleteListener fordert
 	@Override
