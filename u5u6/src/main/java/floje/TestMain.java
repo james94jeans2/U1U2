@@ -7,7 +7,7 @@ public class TestMain {
 		ControllerShop controller = new ControllerShop();
 		ViewShop view = new ViewShop();
 		ControllerCostumer customController = new ControllerCostumer();
-		ViewCostumer client = new ViewCostumer(model);
+		ViewCostumer client = new ViewCostumer();
 		controller.link(model, view);
 		customController.link(model, client);
 	}
