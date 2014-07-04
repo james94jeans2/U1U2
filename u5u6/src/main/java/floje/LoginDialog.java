@@ -1,8 +1,11 @@
 package floje;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -35,7 +38,7 @@ public class LoginDialog extends JDialog {
 		cs.gridwidth = 1;
 		panel.add(lUsername, cs);
 		
-		fieldUserName = new JTextField();
+		fieldUserName = new JTextField(20);
 		cs.gridx = 1;
 		cs.gridwidth = 2;
 		panel.add(fieldUserName, cs);
@@ -44,7 +47,46 @@ public class LoginDialog extends JDialog {
 		cs.gridx = 0;
 		cs.gridy = 1;
 		cs.gridwidth = 1;
+		panel.add(lPassword, cs);
 		
+		fieldPassword = new JPasswordField(20);
+		cs.gridx = 1;
+		cs.gridwidth = 2;
+		panel.add(fieldPassword, cs);
+		
+		bLogin = new JButton("Login");
+		bLogin.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				// TODO send login and order to server
+			}
+		});
+		
+		bCancel = new JButton("Cancel");
+		bCancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(bLogin);
+		buttonPanel.add(bCancel);
+		
+		getContentPane().add(panel, BorderLayout.CENTER);
+		getContentPane().add(buttonPanel, BorderLayout.PAGE_END);
+		
+		pack();
+		setResizable(false);
+		setLocationRelativeTo(parent);
 	}
-
+	
+	public boolean isSucceeded () {
+		return succeeded;
+	}
+	
 }

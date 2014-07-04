@@ -3,6 +3,8 @@ package floje;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JDialog;
+
 public class ControllerCostumer implements ActionListener {
 
 	private ModelShop shop;
@@ -18,6 +20,11 @@ public class ControllerCostumer implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Perform login and order
+		JDialog dialog = new LoginDialog(view);
+		dialog.setVisible(true);
+	}
+	
+	public void performOrder (LoginDialog login) {
 		
 	}
 
