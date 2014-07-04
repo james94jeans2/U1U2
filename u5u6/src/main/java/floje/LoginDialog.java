@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class LoginDialog extends JDialog {
 
@@ -23,8 +24,9 @@ public class LoginDialog extends JDialog {
 	private JLabel lUsername, lPassword;
 	private JButton bLogin, bCancel;
 	private boolean succeeded;
+	private String username, password;
 	
-	public LoginDialog (JFrame parent) {
+	public LoginDialog (final JFrame parent) {
 		super(parent, "Login", true);
 		
 		JPanel panel = new JPanel(new GridBagLayout());
@@ -54,13 +56,21 @@ public class LoginDialog extends JDialog {
 		cs.gridwidth = 2;
 		panel.add(fieldPassword, cs);
 		
+		final LoginDialog dia = this;
+		
 		bLogin = new JButton("Login");
 		bLogin.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				// TODO send login and order to server
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						((ViewCostumer)parent).performOrder(dia);
+					}
+				});
+				dispose();
 			}
 		});
 		
@@ -83,6 +93,14 @@ public class LoginDialog extends JDialog {
 		pack();
 		setResizable(false);
 		setLocationRelativeTo(parent);
+	}
+	
+	public String getUsername () {
+		return fieldUserName.getText().trim();
+	}
+	
+	public String getPassword () {
+		return new String(fieldPassword.getPassword());
 	}
 	
 	public boolean isSucceeded () {

@@ -5,7 +5,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 
-public class ControllerCostumer implements ActionListener {
+import listener.OrderListener;
+
+public class ControllerCostumer implements ActionListener, OrderListener {
 
 	private ModelShop shop;
 	private ViewCostumer view;
@@ -15,17 +17,23 @@ public class ControllerCostumer implements ActionListener {
 		view = costumer;
 		shop.addObserver(costumer);
 		view.addActionListener(this);
+		view.addOrderListener(this);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Perform login and order
 		JDialog dialog = new LoginDialog(view);
 		dialog.setVisible(true);
 	}
-	
-	public void performOrder (LoginDialog login) {
-		
+
+	@Override
+	public void orderPerformend(String login, Order order) {
+		//TODO perform order	
+		System.out.println(login);
+		for (fpt.com.Product product : order) {
+			System.out.println(product.getName());
+			System.out.println(product.getQuantity());
+		}
 	}
 
 }

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -15,6 +16,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.TimerTask;
 import java.util.Timer;
+import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -29,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 
 import listener.AddEvent;
 import listener.DeleteEvent;
+import listener.OrderListener;
 
 public class ViewCostumer extends JFrame implements Observer{
 	
@@ -41,7 +44,6 @@ public class ViewCostumer extends JFrame implements Observer{
 	private  JScrollPane scrollPane;
 	private JPanel buttonPanel;
 	private JList<fpt.com.Order> orderList; 
-	private ModelShop model;
 	DefaultTableModel modelt;
 	private String[] columnNames = {"Name",
             "Preis",
@@ -51,12 +53,10 @@ public class ViewCostumer extends JFrame implements Observer{
 	private final JLabel date;
 	private JButton ok;
 	private ProductList products;
+	private OrderListener listener;
 	
-	
-	
-	public ViewCostumer(ModelShop model){
+	public ViewCostumer(){
 		super("PC-Hardware Shop Costumer");
-		this.model = model;
 		this.setPreferredSize(new Dimension(width, height));
 		this.setMinimumSize(new Dimension(width, height));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -148,7 +148,7 @@ public class ViewCostumer extends JFrame implements Observer{
 			}
 		}
 
-		data=new Object[model.size()][4];
+		data=new Object[products.size()][4];
 		
 		Product[] product = products.toArray(new Product[0]);
 		
@@ -253,12 +253,33 @@ public class ViewCostumer extends JFrame implements Observer{
 		return productTable;
 	}
 	
-	public void addOKListener(ActionListener al){
-		ok.addActionListener(al);;
-	}
-
 	public void addActionListener (ActionListener listener) {
 		ok.addActionListener(listener);
+	}
+	
+	public void addOrderListener (OrderListener listener) {
+		this.listener = listener;
+	}
+	
+	public void performOrder (LoginDialog dialog) {
+		String login = "";
+		login += dialog.getUsername();
+		login += ":";
+		login += dialog.getPassword();
+		Order order = new Order();
+		Vector<Vector<Object>> data = modelt.getDataVector();
+		int j;
+		for (int i = 0; i < data.size(); ++i) {
+			if (((Integer)data.get(i).get(3)) != null) {
+				j = (Integer) data.get(i).get(3);
+				if (j > 0) {
+					Product product = (Product) products.get(i);
+					product.setQuantity(j);
+					order.add(product);
+				}
+			}
+		}
+		listener.orderPerformend(login, order);
 	}
 	
 }
