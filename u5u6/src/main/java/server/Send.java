@@ -3,20 +3,25 @@ package server;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 
 public class Send implements Runnable {
 
 	private OutputStream out;
 	private Object output;
+	private boolean changed;
+	private ServerSocket soc;
 	
-	
-	public Send(OutputStream out){
+	public Send(OutputStream out,ServerSocket soc){
 		this.out=out;
+		changed=true;
+		this.soc=soc;
 	}
 	
 	public void run() {
-		while(true){
-			synchronized (out) {
+		while(!soc.isClosed()){
+		   if(changed){
+			synchronized (soc) {
 				
 			
 			try(ObjectOutputStream oout = new ObjectOutputStream(out)){
@@ -31,7 +36,7 @@ public class Send implements Runnable {
 					e.printStackTrace();
 				}	
 			}
-		
+		 }
 	}		
 	}
 	

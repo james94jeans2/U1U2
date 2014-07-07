@@ -49,7 +49,7 @@ public class TCPServer {
 //							}
 //							}s
 //						}; 
-						Send s = new Send(out);
+						Send s = new Send(out,server);
 						final Thread t2 = new Thread(s);
 						
 //						final Runnable read = new Runnable(){
@@ -85,7 +85,7 @@ public class TCPServer {
 						
 						
 						
-						final Thread t1 = new Thread(new Read(t2,in,wh,s));
+						final Thread t1 = new Thread(new Read(server,in,wh,s));
 						
 
 						t1.start();
