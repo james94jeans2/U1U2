@@ -28,12 +28,7 @@ public class ControllerCostumer implements ActionListener, OrderListener {
 
 	@Override
 	public void orderPerformend(String login, Order order) {
-		//TODO perform order	
-		System.out.println(login);
-		for (fpt.com.Product product : order) {
-			System.out.println(product.getName());
-			System.out.println(product.getQuantity());
-		}
+		shop.performOrder(login, order);
 	}
 
 }
