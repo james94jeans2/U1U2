@@ -11,10 +11,12 @@ public class Read implements Runnable{
 	private InputStream in;
 	private Thread t2;
 	private Send s;
+	private Warehouse wh;
 	
-	public Read(Thread t, InputStream in, Send s){
+	public Read(Thread t, InputStream in, Warehouse wh, Send s){
 		t2=t;
 		this.in=in;
+		this.wh=wh;
 		this.s=s;
 	}
 	
@@ -39,7 +41,7 @@ public class Read implements Runnable{
 								s.setOut(true);
 								t2.notify();
 								Order inorder = (Order)indata;
-								s.setOut(inorder);
+								wh.addOrder(inorder);
 								t2.notify();
 							}
 						}else{

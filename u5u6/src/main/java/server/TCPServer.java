@@ -48,7 +48,6 @@ public class TCPServer {
 //							}
 //							}s
 //						}; 
-						
 						Send s = new Send(out);
 						final Thread t2 = new Thread(s);
 						
@@ -83,11 +82,17 @@ public class TCPServer {
 //							}
 //						};
 						
-						final Thread t1 = new Thread(new Read(t2,in,s));
+						Warehouse wh = new Warehouse(s);
+						
+						final Thread t1 = new Thread(new Read(t2,in,wh,s));
 						
 
 						t1.start();
 						t2.start();
+						Thread wht = new Thread(wh);
+						wht.start();
+						
+
 					
 						
 						
