@@ -22,9 +22,9 @@ public class TCPServer {
 					server = new ServerSocket(6666);
 					
 					while (true) {
-						
+						Socket client = null;
 						try{
-							Socket client = server.accept();
+							client = server.accept();
 							in = client.getInputStream();
 							out = client.getOutputStream();
 						}catch(IOException e1) {
@@ -49,7 +49,7 @@ public class TCPServer {
 //							}
 //							}s
 //						}; 
-						Send s = new Send(out,server);
+						Send s = new Send(out,client);
 						final Thread t2 = new Thread(s);
 						
 //						final Runnable read = new Runnable(){
@@ -85,7 +85,7 @@ public class TCPServer {
 						
 						
 						
-						final Thread t1 = new Thread(new Read(server,in,wh,s));
+						final Thread t1 = new Thread(new Read(client,in,wh,s));
 						
 
 						t1.start();

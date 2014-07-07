@@ -27,6 +27,7 @@ public class Warehouse implements Runnable {
 	@Override
 	public void run() {
 		CopyOnWriteArrayList<Pair<Product, Integer>> list = new CopyOnWriteArrayList<>();
+		orders = new CopyOnWriteArrayList<Order>();
 		int i = 0;
 		while(true){
 			if(changed){

@@ -26,32 +26,38 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 		super();
 		//TODO create Connection
 		try {
-			Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
+			final Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
 			final InputStream input = socket.getInputStream();
 			final ModelShop shop = this;
 			in = new Runnable() {
 				@Override
 				public void run() {
 					ObjectInputStream ois = null;
-					try {
-						ois = new ObjectInputStream(input);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					synchronized (socket) {
+						try {
+							ois = new ObjectInputStream(input);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					if (ois != null) {
-						while (true) {
-							try {
-								Order order = (Order) ois.readObject();
-								shop.addOrder(order);
-							} catch (ClassNotFoundException | IOException e) {
-								e.printStackTrace();
+						while (socket.isConnected()) {
+							synchronized (socket) {
+								try {
+									Object order = ois.readObject();
+									if (order instanceof Order) {
+										shop.addOrder((Order) order);
+									}
+								} catch (ClassNotFoundException | IOException e) {
+									e.printStackTrace();
+								}
 							}
 						}
 					}
 				}
 			};
-			out = new Out(socket.getOutputStream());
+			out = new Out(socket.getOutputStream(), socket);
 			Thread t1, t2;
 			t1 = new Thread(in);
 			t2 = new Thread(out);
@@ -115,7 +121,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	public void performOrder (String login, Order order) {
 		//TODO redirect to TCP/IP
 		if (in != null && out != null) {
-			
+			out.sendOrder(login, order);
 		}
 	}
 	
