@@ -23,30 +23,33 @@ public class Read implements Runnable{
 	@Override
 	public void run() {
 		while(true){
+			
 			try {
 				t2.wait();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+
 			String input = "";
-				try{
-					ObjectInputStream oin = new ObjectInputStream(in);
+			synchronized (in) {
+				try(ObjectInputStream oin = new ObjectInputStream(in);){
 					Object indata;
 					indata = oin.readObject();
 					if(indata instanceof String){
 						input = (String)indata;
 						if(authentifizierung(input)){
 							if(indata instanceof Order){
-								s.setOut(true);
+								s.setOut(true);					
 								t2.notify();
 								Order inorder = (Order)indata;
+								s.setOut(inorder);
 								wh.addOrder(inorder);
-								t2.notify();
+								
 							}
 						}else{
 							s.setOut(false);
-							t2.notify();
+							
 						}
 					}
 					
@@ -56,7 +59,7 @@ public class Read implements Runnable{
 				// TODO Auto-generated catch block
 					e.printStackTrace();				
 				}
-			
+			}
 		}		
 	}
 	

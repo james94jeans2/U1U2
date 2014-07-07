@@ -17,6 +17,7 @@ public class TCPServer {
 	
 	public static void main(String[] args){
 		// ServerSocket erstellen
+		Warehouse wh = new Warehouse();
 				try {
 					server = new ServerSocket(6666);
 					
@@ -82,7 +83,7 @@ public class TCPServer {
 //							}
 //						};
 						
-						Warehouse wh = new Warehouse(s);
+						
 						
 						final Thread t1 = new Thread(new Read(t2,in,wh,s));
 						

@@ -13,14 +13,14 @@ public class Warehouse implements Runnable {
 	public boolean changed=false;
 	private Send s;
 	
-	public Warehouse(Send s) {
-		this.s=s;
-	}
 
 
-	public synchronized void addOrder(Order order){
-		orders.add(order);
-		changed=true;
+	public void addOrder(Order order){
+		synchronized (orders) {
+			orders.add(order);
+			changed=true;
+		}
+		
 	}
 	
 
@@ -37,14 +37,13 @@ public class Warehouse implements Runnable {
 					for(Order o: orders){
 						for(Product p : o){
 							ges+=p.getPrice();						
-								
-							if(list.contains(Pair.of(p,i))){
-								i = list.get(list.indexOf(p)).getRight();
-								Pair.of(p, i).setValue(i+1);
-								
-							}else{								
-								list.add(Pair.of(p,1));
-							}
+								if(!list.contains(p)){
+									list.add(Pair.of(p,p.getQuantity()));
+								}else{
+									i=p.getQuantity();
+									i+=list.get(list.indexOf(p)).getValue();
+									list.get(list.indexOf(p)).setValue(i);
+								}
 						}	
 						
 					}

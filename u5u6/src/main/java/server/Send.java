@@ -16,25 +16,30 @@ public class Send implements Runnable {
 	
 	public void run() {
 		while(true){
+			synchronized (out) {
+				
 			
-			try{
-				ObjectOutputStream oout = new ObjectOutputStream(out);
-				synchronized (oout) {
-					oout.writeObject(output);
-					oout.flush();
-				}
+			try(ObjectOutputStream oout = new ObjectOutputStream(out)){
+					synchronized (output) {
+						oout.writeObject(output);
+						oout.flush();
+					}
 			
 				
 				
-			}catch(IOException e){
-				e.printStackTrace();
-			}		
+				}catch(IOException e){
+					e.printStackTrace();
+				}	
+			}
 		
 	}		
 	}
 	
-	public synchronized void setOut(Object temp){
-		output=temp;
+	public void setOut(Object temp){
+		synchronized (output) {
+			output=temp;
+		}
+		
 
 	}
 
