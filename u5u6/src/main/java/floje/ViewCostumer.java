@@ -37,8 +37,7 @@ public class ViewCostumer extends JFrame implements Observer{
 	
 	private static final long serialVersionUID = -5399845903830908290L;
 	private static final int width = 800, height = 400;
-	private JPanel rightSide = new JPanel();
-	private JScrollPane leftSide;
+	private JPanel rightSide = new JPanel(), leftSide;
 	private JTable productTable;
 	private Object[][] data;
 	private  JScrollPane scrollPane;
@@ -71,7 +70,8 @@ public class ViewCostumer extends JFrame implements Observer{
 		orderList = new JList<fpt.com.Order>();
 		
 		orderList.setCellRenderer(new ListOrderRenderer());
-		leftSide = new JScrollPane(orderList);		
+		leftSide = new JPanel(new BorderLayout());		
+		leftSide.add(new JScrollPane(orderList), BorderLayout.CENTER);
 		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
 		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
 		rightSide.setLayout(new BorderLayout());;
