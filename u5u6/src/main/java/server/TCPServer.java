@@ -18,6 +18,8 @@ public class TCPServer {
 	public static void main(String[] args){
 		// ServerSocket erstellen
 		Warehouse wh = new Warehouse();
+		Thread wht = new Thread(wh);
+		wht.start();
 				try {
 					server = new ServerSocket(6666);
 					
@@ -90,8 +92,7 @@ public class TCPServer {
 
 						t2.start();
 						t1.start();
-						Thread wht = new Thread(wh);
-						wht.start();
+						
 						
 
 					
