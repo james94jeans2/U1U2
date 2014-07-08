@@ -1,30 +1,27 @@
 package floje;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.Observable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import fpt.com.Product;
 import listener.AddEvent;
 import listener.DeleteEvent;
+import fpt.com.Product;
 
 public class ModelShop extends Observable implements fpt.com.ProductList{
 	
 
 	private static final long serialVersionUID = -9111970668561441955L;
 	private floje.ProductList products = new floje.ProductList();
+	private CopyOnWriteArrayList<Order> orders;
 	private In in;
 	private Out out;
 
 	public ModelShop () {
 		super();
-		//TODO create Connection
+		orders = new CopyOnWriteArrayList<Order>();
 		try {
 			Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
 			in = new In(socket, this);
@@ -40,13 +37,18 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	}
 
 	public void addOrder (Order order) {
-		//TODO
-		System.out.println(order.getQuantity());
+		orders.add(order);
+		super.setChanged();
+		super.notifyObservers(null);
 	}
 	
 	@Override
 	public Iterator<Product> iterator() {
 		return products.iterator();
+	}
+	
+	public CopyOnWriteArrayList<Order> getOrders () {
+		return orders;
 	}
 
 	@Override

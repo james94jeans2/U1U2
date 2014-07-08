@@ -136,32 +136,36 @@ public class ViewCostumer extends JFrame implements Observer{
 		//Wenn das Model eine Änderung mitgeteilt hat, werden nicht vorhande
 		//Produkte der Liste hinzugefügt und gelöschte Objekte gegebenenfalls
 		//entfernt
-		if(arg.getClass().equals(AddEvent.class))
-		{
-			products.add(((AddEvent)arg).getProduct());
-		}
-		else
-		{
-			if(arg.getClass().equals(DeleteEvent.class))
+		if (arg != null) {
+			if(arg.getClass().equals(AddEvent.class))
 			{
-				products.remove(((DeleteEvent)arg).getProduct());
+				products.add(((AddEvent)arg).getProduct());
 			}
+			else
+			{
+				if(arg.getClass().equals(DeleteEvent.class))
+				{
+					products.remove(((DeleteEvent)arg).getProduct());
+				}
+			}
+	
+			data=new Object[products.size()][4];
+			
+			Product[] product = products.toArray(new Product[0]);
+			
+			for(int i=0;i<product.length;i++){
+				
+				
+				data[i][0]=product[i].getName();
+				data[i][1]=product[i].getPrice();
+				data[i][2]=product[i].getQuantity();
+											
+				
+			}		
+			productTable.setModel(consModel());	
+		} else {
+			orderList.setListData(((ModelShop) o).getOrders().toArray(new Order[0]));
 		}
-
-		data=new Object[products.size()][4];
-		
-		Product[] product = products.toArray(new Product[0]);
-		
-		for(int i=0;i<product.length;i++){
-			
-			
-			data[i][0]=product[i].getName();
-			data[i][1]=product[i].getPrice();
-			data[i][2]=product[i].getQuantity();
-										
-			
-		}		
-		productTable.setModel(consModel());	
 	}
 	
 	public void paint (Graphics g) {

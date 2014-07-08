@@ -264,6 +264,9 @@ public class ViewShop extends JFrame implements Observer {
 		//Wenn das Model eine Änderung mitgeteilt hat, werden nicht vorhande
 		//Produkte der Liste hinzugefügt und gelöschte Objekte gegebenenfalls
 		//entfernt
+		if (arg == null) {
+			return;
+		}
 		if(arg.getClass().equals(AddEvent.class))
 		{
 			productModel.addElement(((AddEvent)arg).getProduct());
