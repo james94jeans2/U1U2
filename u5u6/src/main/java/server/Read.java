@@ -30,19 +30,19 @@ public class Read implements Runnable{
 	@Override
 	public void run() {
 		ObjectInputStream oin = null;
+		synchronized (soc) {
+			
+				try {
+					oin = new ObjectInputStream(in);
+					System.out.println("ois initialized");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		while(!soc.isClosed() && !stop){
 			String input = "";
-			synchronized (soc) {
-				
-				if (!initialized) {
-					try {
-						oin = new ObjectInputStream(in);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					initialized = true;
-				}
+			//synchronized (soc) {
 				try{
 					Object indata;
 					indata = oin.readObject();
@@ -56,6 +56,7 @@ public class Read implements Runnable{
 								Order inorder = (Order)indata;
 								System.out.println(inorder.getQuantity());
 								s.setOut(inorder);
+								System.out.println("hello");
 								wh.addOrder(inorder);
 								
 							}
@@ -68,13 +69,14 @@ public class Read implements Runnable{
 					
 				}catch(IOException e){
 					e.printStackTrace();
+					stop = true;
 				} catch (Exception e) {
 				// TODO Auto-generated catch block
 					e.printStackTrace();
 					stop = true;
 				}
 			}
-		}		
+		//}		
 	}
 	
 	private boolean authentifizierung(String auth) {

@@ -19,44 +19,15 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 
 	private static final long serialVersionUID = -9111970668561441955L;
 	private floje.ProductList products = new floje.ProductList();
-	private Runnable in;
+	private In in;
 	private Out out;
 
 	public ModelShop () {
 		super();
 		//TODO create Connection
 		try {
-			final Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
-			final InputStream input = socket.getInputStream();
-			final ModelShop shop = this;
-			in = new Runnable() {
-				@Override
-				public void run() {
-					ObjectInputStream ois = null;
-					synchronized (socket) {
-						try {
-							ois = new ObjectInputStream(input);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					if (ois != null) {
-						while (socket.isConnected()) {
-							synchronized (socket) {
-								try {
-									Object order = ois.readObject();
-									if (order instanceof Order) {
-										shop.addOrder((Order) order);
-									}
-								} catch (ClassNotFoundException | IOException e) {
-									e.printStackTrace();
-								}
-							}
-						}
-					}
-				}
-			};
+			Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
+			in = new In(socket, this);
 			out = new Out(socket.getOutputStream(), socket);
 			Thread t1, t2;
 			t1 = new Thread(in);
@@ -70,6 +41,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 
 	public void addOrder (Order order) {
 		//TODO
+		System.out.println(order.getQuantity());
 	}
 	
 	@Override

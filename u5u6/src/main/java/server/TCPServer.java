@@ -88,8 +88,8 @@ public class TCPServer {
 						final Thread t1 = new Thread(new Read(client,in,wh,s));
 						
 
-						t1.start();
 						t2.start();
+						t1.start();
 						Thread wht = new Thread(wh);
 						wht.start();
 						

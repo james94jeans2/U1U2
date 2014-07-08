@@ -29,14 +29,16 @@ public class Out implements Runnable {
 	@Override
 	public void run() {
 		ObjectOutputStream oos = null;
-		try {
-			oos = new ObjectOutputStream(out);
-		} catch (IOException e) {
-			e.printStackTrace();
+		synchronized (socket) {
+			try {
+				oos = new ObjectOutputStream(out);
+				System.out.println("oos initialized");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		if (oos != null) {
 			while (socket.isConnected()) {
-				synchronized (socket) {
 					synchronized (work) {
 						if (!work.isEmpty()) {
 							Pair<String, Order> todo = work.get(0);
@@ -53,8 +55,9 @@ public class Out implements Runnable {
 							
 						}
 					}
-				}
 			}
+		} else {
+			System.out.println("Outputstream == null");
 		}
 	}
 
