@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -14,8 +13,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.TimerTask;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -23,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -42,7 +42,7 @@ public class ViewCostumer extends JFrame implements Observer{
 	private Object[][] data;
 	private  JScrollPane scrollPane;
 	private JPanel buttonPanel;
-	private JList<fpt.com.Order> orderList; 
+	private JList<Order> orderList; 
 	DefaultTableModel modelt;
 	private String[] columnNames = {"Name",
             "Preis",
@@ -53,9 +53,11 @@ public class ViewCostumer extends JFrame implements Observer{
 	private JButton ok;
 	private ProductList products;
 	private OrderListener listener;
+	private static ViewCostumer instance;
 	
 	public ViewCostumer(){
 		super("PC-Hardware Shop Costumer");
+		instance = this;
 		this.setPreferredSize(new Dimension(width, height));
 		this.setMinimumSize(new Dimension(width, height));
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -67,7 +69,7 @@ public class ViewCostumer extends JFrame implements Observer{
 		this.setLocation(((screenWidth - width) / 2), ((screenHeight - height) / 2)+height);
 		products = new ProductList();
 				
-		orderList = new JList<fpt.com.Order>();
+		orderList = new JList<Order>();
 		
 		orderList.setCellRenderer(new ListOrderRenderer());
 		leftSide = new JPanel(new BorderLayout());		
@@ -284,6 +286,14 @@ public class ViewCostumer extends JFrame implements Observer{
 			}
 		}
 		listener.orderPerformend(login, order);
+	}
+	
+	public static ViewCostumer getInstance () {
+		return instance;
+	}
+	
+	public void showError () {
+		JOptionPane.showMessageDialog(this, "Wrong Login Credentials, please try again!", "Authentification Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 }
