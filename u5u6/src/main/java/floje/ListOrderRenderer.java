@@ -34,10 +34,16 @@ public class ListOrderRenderer implements ListCellRenderer<Order> {
 		box.add(outer);
 		JPanel content = new JPanel(new GridLayout(value.size() + 1, 3));
 		content.setBackground(Color.WHITE);
-		content.add(new JLabel("Anzahl", JLabel.CENTER));
-		content.add(new JLabel("Name", JLabel.CENTER));
-		content.add(new JLabel("Preis", JLabel.CENTER));
-		JLabel label = new JLabel("random");
+		JLabel label = new JLabel("Anzahl", JLabel.CENTER);
+		label.setFont(f);
+		content.add(label);
+		label = new JLabel("Name", JLabel.CENTER);
+		label.setFont(f);
+		content.add(label);
+		label = new JLabel("Preis", JLabel.CENTER);
+		label.setFont(f);
+		content.add(label);
+		label = new JLabel("random");
 		f = label.getFont();
 		f = f.deriveFont(Font.ITALIC, f.getSize());
 		for (fpt.com.Product p : value) {
