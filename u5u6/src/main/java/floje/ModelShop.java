@@ -95,6 +95,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	public void performOrder (String login, Order order) {
 		//TODO redirect to TCP/IP
 		if (in != null && out != null) {
+
 			out.sendOrder(login, order);
 		}
 	}

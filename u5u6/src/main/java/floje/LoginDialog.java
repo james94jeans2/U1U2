@@ -3,7 +3,6 @@ package floje;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -24,7 +23,6 @@ public class LoginDialog extends JDialog {
 	private JLabel lUsername, lPassword;
 	private JButton bLogin, bCancel;
 	private boolean succeeded;
-	private String username, password;
 	
 	public LoginDialog (final JFrame parent) {
 		super(parent, "Login", true);

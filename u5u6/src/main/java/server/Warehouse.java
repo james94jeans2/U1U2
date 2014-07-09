@@ -4,6 +4,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import floje.ProductList;
 import fpt.com.Order;
 import fpt.com.Product;
 
@@ -16,12 +17,12 @@ public class Warehouse implements Runnable {
 
 	public void addOrder(Order order){
 		//synchronized (orders) {
-			System.out.println("add Order wh");
+			//System.out.println("add Order wh");
 			orders.add(order);
 			synchronized ((Object)changed) {
 			changed=true;
 			}
-			System.out.println("add complete");
+//			System.out.println("add complete");
 		//}
 		
 	}
@@ -29,43 +30,99 @@ public class Warehouse implements Runnable {
 
 	@Override
 	public void run() {
-		CopyOnWriteArrayList<Pair<Product, Integer>> list = new CopyOnWriteArrayList<>();
+		ProductList list = new ProductList();
 		orders = new CopyOnWriteArrayList<Order>();
 		changed=false;
 		int i = 0;
+		String temp,newestOrder,trenn,ordered;
+		Double price;
+		Product pro;
+		trenn="";
+		int anzahlP=0;
+		for(int k = 0; k<80;k++){
+			trenn+="=";
+		}
+		
 		while(true){
 			synchronized((Object)changed) {
 			if(changed){
-				System.out.println("geändert");
+//				System.out.println("geändert");
 				synchronized (orders) {
-					System.out.println("Orders: "+orders);
+					
 					double ges=0;
-			
 					for(Order o: orders){
 						for(Product p : o){
-							ges+=p.getPrice();						
-								if(!list.contains(p)){
-									list.add(Pair.of(p,p.getQuantity()));
+								ges+=p.getPrice()*p.getQuantity();	
+//								System.out.println(p.getId());
+								if(p.getId()==0){
+									if(list.findProductByName(p.getName())==null){
+										list.add(p);
+									}else{
+										i=p.getQuantity();
+										i+=list.findProductByName(p.getName()).getQuantity();
+										list.findProductByName(p.getName()).setQuantity(i);
+									}
 								}else{
 									i=p.getQuantity();
-									i+=list.get(list.indexOf(p)).getValue();
-									list.get(list.indexOf(p)).setValue(i);
+									if(list.findProductById(p.getId())==null){
+										list.add(p);
+									}else{
+										i+=list.findProductById(p.getId()).getQuantity();
+										list.findProductById(p.getId()).setQuantity(i);
+									}
+									
 								}
+								anzahlP+=p.getQuantity();
 						}	
 						
 					}
-					String ordered="";
-					for(int k = 0; k<list.size();k++){
-						ordered+="Product: "+list.get(k).getLeft().getName()+" wurde "+list.get(k).getRight()+" mal bestellt.\n";
+					
+					newestOrder="";
+					for(Product p:orders.get(orders.size()-1)){
+							newestOrder+=p.getName();
+							newestOrder=fill(newestOrder,p.getName().length(),39);
+							newestOrder+=p.getQuantity();
+							price = p.getPrice()*p.getQuantity();
+							temp= price.toString();
+							newestOrder=fill(newestOrder,39+(""+p.getQuantity()).length(),80-temp.length());
+							newestOrder+=temp+"\n";
+						
 					}
-					System.out.println("Gesammtpreis: "+ges);
-					System.out.println(ordered);
+					ordered="";
+					for(int k = 0; k<list.size();k++){ 
+						pro=list.get(k);
+						ordered+="\n"+pro.getName();
+						ordered=fill(ordered,pro.getName().length(),39);
+						ordered+=pro.getQuantity();					
+						price=pro.getPrice()*pro.getQuantity();
+						temp= price.toString();
+						ordered=fill(ordered,39+(""+pro.getQuantity()).length(),80-temp.length());
+						ordered+=temp;						
+					}
+					synchronized (System.out) {
+						
+						System.out.println("... \nOrder eingegangen:");
+						System.out.println(newestOrder);
+//						System.out.println(" ");
+						System.out.println("Orders gesammt:");
+						System.out.println(trenn);
+						System.out.println(ordered);
+						System.out.println(trenn);
+						System.out.println("Gesammtanzahl: "+anzahlP);
+						System.out.println("Gesammtpreis: "+ges);
+					}
 				}
 				changed=false;
 			}
 			}
 		}
 		
+	}
+	private String fill(String s,int start, int ende){
+		for(int k = start;k<ende ;k++){
+			s+=" ";
+		}
+		return s;
 	}
 	
 	

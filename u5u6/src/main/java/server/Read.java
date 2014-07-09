@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import fpt.com.Order;
+import fpt.com.Product;
 
 public class Read implements Runnable{
 
@@ -58,6 +59,9 @@ public class Read implements Runnable{
 								s.setOut(inorder);
 								System.out.println("hello");
 								wh.addOrder(inorder);
+								for(Product p: inorder){
+									System.out.println(p.getName()+"   "+p.getQuantity());
+								}
 								
 							}
 						}else{

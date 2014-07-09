@@ -8,6 +8,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import fpt.com.Product;
+
 public class Out implements Runnable {
 	
 	private OutputStream out;
@@ -42,6 +44,8 @@ public class Out implements Runnable {
 					synchronized (work) {
 						if (!work.isEmpty()) {
 							Pair<String, Order> todo = work.get(0);
+							
+							
 							try {
 								oos.writeObject(todo.getKey());
 								oos.flush();
