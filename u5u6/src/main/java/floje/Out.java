@@ -8,18 +8,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import fpt.com.Product;
-
 public class Out implements Runnable {
 	
 	private OutputStream out;
 	private Socket socket;
 	private CopyOnWriteArrayList<Pair<String, Order>> work;
+	private boolean stop;
+	private In in;
 
-	public Out (OutputStream out, Socket socket) {
+	public Out (OutputStream out, Socket socket, In in) {
 		this.socket = socket;
 		work = new CopyOnWriteArrayList<Pair<String,Order>>();
 		this.out = out;
+		stop = false;
+		this.in = in;
 	}
 	
 	public void sendOrder (String login, Order order) {
@@ -40,7 +42,7 @@ public class Out implements Runnable {
 			}
 		}
 		if (oos != null) {
-			while (socket.isConnected()) {
+			while (socket.isConnected() && !stop) {
 					synchronized (work) {
 						if (!work.isEmpty()) {
 							Pair<String, Order> todo = work.get(0);
@@ -49,8 +51,20 @@ public class Out implements Runnable {
 							try {
 								oos.writeObject(todo.getKey());
 								oos.flush();
-								oos.writeObject(todo.getValue());
-								oos.flush();
+								int ret = 0;
+								System.out.println("waiting for response");
+								while ((ret = in.bla()) == 0 && !stop) {
+								}
+								System.out.println("got response");
+								if (ret == -1) {
+									ViewCostumer.getInstance().showError();
+									work.remove(todo);
+									continue;
+								} else {
+									oos.writeObject(todo.getValue());
+									oos.flush();
+									oos.reset();
+								}
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -60,8 +74,22 @@ public class Out implements Runnable {
 						}
 					}
 			}
+			try {
+				oos.writeObject(-1);
+			} catch (IOException e1) {
+			}
+			try {
+				oos.close();
+			} catch (IOException e) {
+			}
 		} else {
 			System.out.println("Outputstream == null");
+		}
+	}
+	
+	public void stop () {
+		synchronized ((Object)stop) {
+			stop = true;
 		}
 	}
 

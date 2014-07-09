@@ -1,5 +1,6 @@
 package floje;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Iterator;
@@ -18,21 +19,46 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	private CopyOnWriteArrayList<Order> orders;
 	private In in;
 	private Out out;
+	private Thread tIn, tOut;
+	private Socket socket;
 
 	public ModelShop () {
 		super();
 		orders = new CopyOnWriteArrayList<Order>();
 		try {
-			Socket socket = new Socket(InetAddress.getByName("localhost"), 6666);
+			socket = new Socket(InetAddress.getByName("localhost"), 6666);
 			in = new In(socket, this);
-			out = new Out(socket.getOutputStream(), socket);
-			Thread t1, t2;
-			t1 = new Thread(in);
-			t2 = new Thread(out);
-			t1.start();
-			t2.start();
+			out = new Out(socket.getOutputStream(), socket, in);
+			tIn = new Thread(in);
+			tOut = new Thread(out);
+			tIn.start();
+			tOut.start();
 		} catch (Exception e) {
 			System.out.println("Couldn't connect to server!");
+		}
+	}
+	
+	public void closeConnnections () {
+		out.stop();
+		if (tOut.isAlive()) {
+			try {
+				tOut.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		in.stop();
+		if (tIn.isAlive()) {
+			try {
+				tIn.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

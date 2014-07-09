@@ -3,11 +3,9 @@ package server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 
-import fpt.com.Order;
-import fpt.com.Product;
+import floje.Order;
 
 public class Read implements Runnable{
 
@@ -16,7 +14,7 @@ public class Read implements Runnable{
 	private Send s;
 	private Warehouse wh;
 	private Socket soc;
-	private boolean stop, initialized;
+	private boolean stop;
 	
 	public Read(Socket soc, InputStream in, Warehouse wh, Send s){
 		//t2=t;
@@ -24,7 +22,6 @@ public class Read implements Runnable{
 		this.wh=wh;
 		this.s=s;
 		stop = false;
-		initialized = false;
 		this.soc=soc;
 	}
 	
@@ -50,19 +47,14 @@ public class Read implements Runnable{
 					if(indata instanceof String){
 						input = (String)indata;
 						if(authentifizierung(input)){
+							s.setOut(true);	
+							System.out.println("waiting for Data");
 							indata = oin.readObject();
 							if(indata instanceof Order){
-								s.setOut(true);					
-								
 								Order inorder = (Order)indata;
-								System.out.println(inorder.getQuantity());
 								s.setOut(inorder);
 								System.out.println("hello");
 								wh.addOrder(inorder);
-								for(Product p: inorder){
-									System.out.println(p.getName()+"   "+p.getQuantity());
-								}
-								
 							}
 						}else{
 							System.out.println(input);
@@ -70,7 +62,11 @@ public class Read implements Runnable{
 							
 						}
 					}
-					
+					if (indata instanceof Integer) {
+						if ((Integer)indata == -1) {
+							stop = true;
+						}
+					}
 				}catch(IOException e){
 					e.printStackTrace();
 					stop = true;
@@ -80,6 +76,12 @@ public class Read implements Runnable{
 					stop = true;
 				}
 			}
+		System.out.println("Shutting down ois!");
+		try {
+			oin.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		//}		
 	}
 	

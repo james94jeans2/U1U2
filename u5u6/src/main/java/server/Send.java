@@ -3,14 +3,13 @@ package server;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Send implements Runnable {
 
 	private OutputStream out;
 	private Object output;
-	private boolean changed;
+	private boolean changed, stop;
 	private Socket soc;
 	
 	public Send(OutputStream out,Socket soc){
@@ -18,6 +17,7 @@ public class Send implements Runnable {
 		changed=false;
 		this.soc=soc;
 		output = new Object();
+		stop = false;
 	}
 	
 	public void run() {
@@ -31,7 +31,7 @@ public class Send implements Runnable {
 					e.printStackTrace();
 				}
 			}
-		while(!soc.isClosed() && oout != null){
+		while(!soc.isClosed() && oout != null && !stop){
 			//synchronized (soc) {
 		   if(changed){
 			try{
@@ -39,6 +39,9 @@ public class Send implements Runnable {
 						System.out.println("writing");
 						oout.writeObject(output);
 						oout.flush();
+						if (output instanceof Integer) {
+							stop = true;
+						}
 					}
 			
 				
@@ -49,7 +52,12 @@ public class Send implements Runnable {
 				changed = false;
 			}
 		 //}
-	}		
+	}
+		try {
+			oout.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		System.out.println("Outputconnection closed");
 	}
 	
@@ -57,7 +65,6 @@ public class Send implements Runnable {
 		synchronized (output) {
 			output=temp;
 			changed = true;
-			System.out.println("out set");
 		}
 		
 

@@ -10,6 +10,7 @@ public class TestMain {
 		ViewCostumer client = new ViewCostumer();
 		controller.link(model, view);
 		customController.link(model, client);
+		Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownThread(model)));
 	}
 	
 }

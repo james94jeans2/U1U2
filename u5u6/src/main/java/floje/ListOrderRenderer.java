@@ -12,9 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
-import javax.swing.border.TitledBorder;
-
-import fpt.com.Order;
+import floje.Order;
 
 public class ListOrderRenderer implements ListCellRenderer<Order> {
 

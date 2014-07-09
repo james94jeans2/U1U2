@@ -2,10 +2,8 @@ package server;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import floje.ProductList;
-import fpt.com.Order;
+import floje.Order;
 import fpt.com.Product;
 
 public class Warehouse implements Runnable {
@@ -16,14 +14,12 @@ public class Warehouse implements Runnable {
 
 
 	public void addOrder(Order order){
-		//synchronized (orders) {
-			//System.out.println("add Order wh");
+		synchronized (orders) {
 			orders.add(order);
 			synchronized ((Object)changed) {
-			changed=true;
+				changed=true;
 			}
-//			System.out.println("add complete");
-		//}
+		}
 		
 	}
 	
@@ -35,7 +31,8 @@ public class Warehouse implements Runnable {
 		changed=false;
 		int i = 0;
 		String temp,newestOrder,trenn,ordered;
-		Double price;
+		Double price, ges;
+		ges = 0d;
 		Product pro;
 		trenn="";
 		int anzahlP=0;
@@ -46,37 +43,7 @@ public class Warehouse implements Runnable {
 		while(true){
 			synchronized((Object)changed) {
 			if(changed){
-//				System.out.println("geändert");
 				synchronized (orders) {
-					
-					double ges=0;
-					for(Order o: orders){
-						for(Product p : o){
-								ges+=p.getPrice()*p.getQuantity();	
-//								System.out.println(p.getId());
-								if(p.getId()==0){
-									if(list.findProductByName(p.getName())==null){
-										list.add(p);
-									}else{
-										i=p.getQuantity();
-										i+=list.findProductByName(p.getName()).getQuantity();
-										list.findProductByName(p.getName()).setQuantity(i);
-									}
-								}else{
-									i=p.getQuantity();
-									if(list.findProductById(p.getId())==null){
-										list.add(p);
-									}else{
-										i+=list.findProductById(p.getId()).getQuantity();
-										list.findProductById(p.getId()).setQuantity(i);
-									}
-									
-								}
-								anzahlP+=p.getQuantity();
-						}	
-						
-					}
-					
 					newestOrder="";
 					for(Product p:orders.get(orders.size()-1)){
 							newestOrder+=p.getName();
@@ -86,8 +53,28 @@ public class Warehouse implements Runnable {
 							temp= price.toString();
 							newestOrder=fill(newestOrder,39+(""+p.getQuantity()).length(),80-temp.length());
 							newestOrder+=temp+"\n";
-						
+							if(p.getId()==0){
+								if(list.findProductByName(p.getName())==null){
+									list.add(p);
+								}else{
+									i=p.getQuantity();
+									i+=list.findProductByName(p.getName()).getQuantity();
+									list.findProductByName(p.getName()).setQuantity(i);
+								}
+							}else{
+								i=p.getQuantity();
+								if(list.findProductById(p.getId())==null){
+									list.add(p);
+								}else{
+									i+=list.findProductById(p.getId()).getQuantity();
+									list.findProductById(p.getId()).setQuantity(i);
+								}
+								
+							}
+							
 					}
+					ges += orders.get(orders.size()-1).getSum();
+					anzahlP += orders.get(orders.size() - 1).getQuantity();
 					ordered="";
 					for(int k = 0; k<list.size();k++){ 
 						pro=list.get(k);
@@ -103,9 +90,8 @@ public class Warehouse implements Runnable {
 						
 						System.out.println("... \nOrder eingegangen:");
 						System.out.println(newestOrder);
-//						System.out.println(" ");
 						System.out.println("Orders gesammt:");
-						System.out.println(trenn);
+						System.out.print(trenn);
 						System.out.println(ordered);
 						System.out.println(trenn);
 						System.out.println("Gesammtanzahl: "+anzahlP);

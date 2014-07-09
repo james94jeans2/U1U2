@@ -21,7 +21,7 @@ public class TCPServer {
 		Thread wht = new Thread(wh);
 		wht.start();
 				try {
-					server = new ServerSocket(6666);
+					server= new ServerSocket(6666);
 					
 					while (true) {
 						Socket client = null;
