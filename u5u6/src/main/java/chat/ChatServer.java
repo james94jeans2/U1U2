@@ -33,7 +33,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatService {
 			}
 			try 
 			{
-				clients.add(new ChatClient(userName));
+				clients.add((ClientService)Naming.lookup(userName));
 			} 
 			catch (MalformedURLException | NotBoundException e)
 			{
@@ -48,9 +48,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatService {
 	@Override
 	public void logout(String userName) throws RemoteException{
 		try {
-			if (clients.remove(new ChatClient(userName))) {
+			if (clients.remove((ClientService)Naming.lookup(userName))) {
 				System.out.println("- Client abgemeldet: '" + userName + "'");
-				send("'" + userName + "' verl�sst den Chat");
+				send("'" + userName + "' verlässt den Chat");
 			}
 		} 
 		catch (MalformedURLException | NotBoundException e)
@@ -64,7 +64,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatService {
 		synchronized (clients) {
 			for (ClientService loggedOnClient : clients)
 			{
-				//TODO: Add method for sending to client
+				loggedOnClient.send(message);
 			}
 		}
 	}

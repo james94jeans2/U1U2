@@ -14,17 +14,17 @@ public class ChatClient extends UnicastRemoteObject implements ClientService
 	private static final long serialVersionUID = 1L;
 	
 	private String userName;
-	private ArrayList<String> messages; //Gedacht gewesen f�r alle nachrichten aber noch keine idee gehabt
+	//private ArrayList<String> messages; //Gedacht gewesen f�r alle nachrichten aber noch keine idee gehabt
 	private ChatService server;
 	
 	public ChatClient(String userName) throws RemoteException, NotBoundException,
 	MalformedURLException
 	{
 		this.userName = userName;
-		this.messages = new ArrayList<String>();
+		//this.messages = new ArrayList<String>();
 		
 		server = (ChatService) Naming.lookup("//localhost/server");
-		
+		Naming.rebind(userName, this);
 		try {
 			server.login(this.userName);
 		} catch (IllegalArgumentException e) {
@@ -35,13 +35,20 @@ public class ChatClient extends UnicastRemoteObject implements ClientService
 	
 	public void logout() throws RemoteException {
 		server.logout(this.userName);
+		try {
+			Naming.unbind(userName);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			e.printStackTrace();
+		}
 		server = null;
 	}
 	
 	@Override
 	public void send(String message) {
-		(new SendMessageWorker(message)).execute();
-		
+		//(new SendMessageWorker(message)).execute();
+		ChatGUI.getInstance().receiveMessage(message);
 	}
 
 	@Override

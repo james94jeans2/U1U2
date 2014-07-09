@@ -42,16 +42,22 @@ public class ChatGUI implements ActionListener {
 	KeyStroke keyStroke;
 	String keyStrokeString;
 
-	
+	ChatService server;
 	String userName;
 	ChatClient client;
-	ClientLink link;
+	//ClientLink link;
+	private static ChatGUI instance;
 	
 
+	public static ChatGUI getInstance () {
+		return instance;
+	}
 
 	public ChatGUI() throws RemoteException, MalformedURLException, NotBoundException {
 	
-		link = new ClientLinkImpl(this);
+		server = (ChatService) Naming.lookup("//localhost/server");
+		instance = this;
+		//link = new ClientLinkImpl(this);
 		
 		frame = new JFrame("Workshop Chat");
 		clientFrame = new JFrame("Login");
@@ -92,9 +98,8 @@ public class ChatGUI implements ActionListener {
 				 if(code == KeyEvent.VK_ENTER && modifiers == KeyEvent.CTRL_MASK)  
 				 {  
 					try {
-						client.send(textField.getText());
+						server.send(userName + ":" + textField.getText());
 					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					textField.setText("");
@@ -118,8 +123,10 @@ public class ChatGUI implements ActionListener {
 
 
 		frame.add(mainPanel);
+		//frame.pack();
 		frame.setVisible(true);
 		clientFrame.add(clientPanel);
+		//clientFrame.pack();
 		clientFrame.setVisible(true);
 		
 		
@@ -130,9 +137,8 @@ public class ChatGUI implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == send) {
 			try {
-				client.send(textField.getText());
+				server.send(userName + ":" + textField.getText());
 			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			textField.setText("");
@@ -141,7 +147,7 @@ public class ChatGUI implements ActionListener {
 			userName = clientName.getText();
 			try {
 				this.client = new ChatClient(userName);
-				client.setLink(link);
+				//client.setLink(link);
 			} catch (RemoteException | MalformedURLException
 					| NotBoundException e1) {
 				e1.printStackTrace();
@@ -158,8 +164,8 @@ public class ChatGUI implements ActionListener {
 		
 	}
 	
-	public void receiveMessage(String userName, String message) {
-	    textPanel.append(userName+": "+message+"\n");
+	public void receiveMessage(String message) {
+	    textPanel.append(message+"\n");
 	    textPanel.setCaretPosition(textPanel.getText().length()-1);
 	  }
 	
