@@ -41,8 +41,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatService {
 			}
 
 			System.out.println("Client angemeldet: '" + userName + "'");
-			send("'" + userName + "' betritt den Chat");
 		}
+		send("'" + userName + "' betritt den Chat");
 	}
 
 	@Override
@@ -72,12 +72,12 @@ public class ChatServer extends UnicastRemoteObject implements ChatService {
 	@Override
 	public java.util.List<String> getUserList() throws RemoteException {
 		List<String> userList = new ArrayList<String>();
-		synchronized (clients) {
+		//synchronized (clients) {
 			for (ClientService loggedOnClient : clients) 
 			{
 				userList.add(loggedOnClient.getName());
 			}
-		}
+		//}
 		return userList;
 	}
 

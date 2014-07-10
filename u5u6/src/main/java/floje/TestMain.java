@@ -1,5 +1,7 @@
 package floje;
 
+import chat.ChatServer;
+
 public class TestMain {
 
 	public static void main(String[] args) {
@@ -11,6 +13,7 @@ public class TestMain {
 		controller.link(model, view);
 		customController.link(model, client);
 		Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownThread(model)));
+		ChatServer.main(null);
 	}
 	
 }

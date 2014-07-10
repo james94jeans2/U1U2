@@ -4,13 +4,17 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Timer;
@@ -29,6 +33,9 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
+import chat.ChatClient;
+import chat.ChatService;
+import chat.ViewChat;
 import listener.AddEvent;
 import listener.DeleteEvent;
 import listener.OrderListener;
@@ -50,7 +57,7 @@ public class ViewCostumer extends JFrame implements Observer{
             "OrderCount"};
 	private DatagramSocket datagramm;
 	private final JLabel date;
-	private JButton ok;
+	private JButton ok, chat;
 	private ProductList products;
 	private OrderListener listener;
 	private static ViewCostumer instance;
@@ -102,6 +109,35 @@ public class ViewCostumer extends JFrame implements Observer{
 		buttonPanel.add(ok, BorderLayout.WEST);
 		date=new JLabel("");
 		buttonPanel.add(date, BorderLayout.CENTER);
+		chat = new JButton("open chat");
+		chat.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String username = JOptionPane.showInputDialog(instance, "Enter your desired username, please!");
+				if (username.contains(" ")) {
+					username = username.trim();
+					username = username.replaceAll(" ", "_");
+					int option = JOptionPane.showOptionDialog(instance, "The username can not contain any spaces! Want to chat as \"" + username + "\"?", "Illegal Username", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
+					if (option == JOptionPane.NO_OPTION) {
+						actionPerformed(e);
+						return;
+					}
+					if (option == JOptionPane.CLOSED_OPTION) {
+						return;
+					}
+				}
+				try {
+					ChatClient client = new ChatClient(username);
+					new ViewChat(client);
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(instance, ex.getMessage(), "Login failed", JOptionPane.ERROR_MESSAGE);
+				} catch (RemoteException | MalformedURLException  | NotBoundException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		buttonPanel.add(chat, BorderLayout.EAST);
 		
 		
 		

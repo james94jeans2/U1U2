@@ -39,6 +39,9 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	}
 	
 	public void closeConnnections () {
+		if (in == null || out == null) {
+			return;
+		}
 		out.stop();
 		if (tOut.isAlive()) {
 			try {
