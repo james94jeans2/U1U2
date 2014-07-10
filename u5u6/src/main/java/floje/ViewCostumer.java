@@ -41,7 +41,7 @@ import listener.DeleteEvent;
 import listener.OrderListener;
 
 public class ViewCostumer extends JFrame implements Observer{
-	
+
 	private static final long serialVersionUID = -5399845903830908290L;
 	private static final int width = 800, height = 400;
 	private JPanel rightSide = new JPanel(), leftSide;
@@ -52,16 +52,16 @@ public class ViewCostumer extends JFrame implements Observer{
 	private JList<Order> orderList; 
 	DefaultTableModel modelt;
 	private String[] columnNames = {"Name",
-            "Preis",
-            "MaxCount",
-            "OrderCount"};
+			"Preis",
+			"MaxCount",
+	"OrderCount"};
 	private DatagramSocket datagramm;
 	private final JLabel date;
 	private JButton ok, chat;
 	private ProductList products;
 	private OrderListener listener;
 	private static ViewCostumer instance;
-	
+
 	public ViewCostumer(){
 		super("PC-Hardware Shop Costumer");
 		instance = this;
@@ -75,46 +75,56 @@ public class ViewCostumer extends JFrame implements Observer{
 		screenHeight = screenSize.height;
 		this.setLocation(((screenWidth - width) / 2), ((screenHeight - height) / 2)+height);
 		products = new ProductList();
-				
+
 		orderList = new JList<Order>();
-		
+
 		orderList.setCellRenderer(new ListOrderRenderer());
 		leftSide = new JPanel(new BorderLayout());		
 		leftSide.add(new JScrollPane(orderList), BorderLayout.CENTER);
 		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
 		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
 		rightSide.setLayout(new BorderLayout());;
-		
 
-		
+
+
 		data=new Object[0][4];
 
-		
+
 		productTable=new JTable(consModel());
 
-		
-		
+
+
 		scrollPane = new JScrollPane(productTable);
-		
+
 		productTable.setFillsViewportHeight(true);
 
-		
+
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BorderLayout());
-		
+
 		ok = new JButton("ok");
 		ok.setPreferredSize(new Dimension(100,70));
-		
-		
+
+
 		buttonPanel.add(ok, BorderLayout.WEST);
 		date=new JLabel("");
 		buttonPanel.add(date, BorderLayout.CENTER);
 		chat = new JButton("open chat");
 		chat.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String username = JOptionPane.showInputDialog(instance, "Enter your desired username, please!");
+				if (username == null)
+				{
+					System.out.println("User aborted login");
+					return;
+				}
+				else if(username.equals(""))
+				{
+					System.out.println("User did not enter a name");
+					return;
+				}
 				if (username.contains(" ")) {
 					username = username.trim();
 					username = username.replaceAll(" ", "_");
@@ -138,18 +148,18 @@ public class ViewCostumer extends JFrame implements Observer{
 			}
 		});
 		buttonPanel.add(chat, BorderLayout.EAST);
-		
-		
-		
-		
+
+
+
+
 		rightSide.add(scrollPane, BorderLayout.CENTER);
 		rightSide.add(buttonPanel, BorderLayout.SOUTH);
-		
+
 		this.add(leftSide);
 		this.add(rightSide);
-		
+
 		this.pack();
-		
+
 		this.setVisible(true);
 		try {
 			datagramm = new DatagramSocket();
@@ -163,10 +173,10 @@ public class ViewCostumer extends JFrame implements Observer{
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		
+
+
+
+
 	}
 
 	@Override
@@ -186,52 +196,52 @@ public class ViewCostumer extends JFrame implements Observer{
 					products.remove(((DeleteEvent)arg).getProduct());
 				}
 			}
-	
+
 			data=new Object[products.size()][4];
-			
+
 			Product[] product = products.toArray(new Product[0]);
-			
+
 			for(int i=0;i<product.length;i++){
-				
-				
+
+
 				data[i][0]=product[i].getName();
 				data[i][1]=product[i].getPrice();
 				data[i][2]=product[i].getQuantity();
-											
-				
+
+
 			}		
 			productTable.setModel(consModel());	
 		} else {
 			orderList.setListData(((ModelShop) o).getOrders().toArray(new Order[0]));
 		}
 	}
-	
+
 	public void paint (Graphics g) {
 		leftSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.4), this.getHeight()));
 		rightSide.setPreferredSize(new Dimension((int)(this.getWidth() * 0.6), this.getHeight()));
 		super.paint(g);
 	}
-	
+
 	private DefaultTableModel consModel(){
 		modelt = new DefaultTableModel(data,columnNames){
 			private static final long serialVersionUID = -4503641078531367197L;
 
 			public boolean isCellEditable(int x, int y) {
 				if(y==3){
-		        	return true;
-		        }
+					return true;
+				}
 				return false;
-            }
-			
+			}
+
 			public Class<?> getColumnClass(int columnCount){
 				if (columnCount==3){
 					return Integer.class;
 				}
 				return String.class;
-				
+
 			}
-			
-			
+
+
 		};
 		return modelt;
 	}
@@ -241,7 +251,7 @@ public class ViewCostumer extends JFrame implements Observer{
 		try {
 			ia = InetAddress.getByName("localhost");
 		} catch (UnknownHostException e2) {
-			
+
 			e2.printStackTrace();
 		}
 		System.out.println("Anfrage");
@@ -251,14 +261,14 @@ public class ViewCostumer extends JFrame implements Observer{
 		final DatagramPacket packet = new DatagramPacket(buffer,buffer.length, ia, 6667);
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
-			
+
 			@Override
 			public void run() {
 				try {
 					datagramm.send(packet);
 				} catch (IOException e1) {
 					e1.printStackTrace();
-					
+
 				}
 			}
 		}, 0, 1000);
@@ -269,7 +279,7 @@ public class ViewCostumer extends JFrame implements Observer{
 		System.out.println(""+datagramm.getPort());
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
-			
+
 			@Override
 			public void run() {
 				byte answer[] = new byte[1024];
@@ -279,30 +289,30 @@ public class ViewCostumer extends JFrame implements Observer{
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				
+
 				final String ding = new String(inpack.getData()).trim();
 				SwingUtilities.invokeLater(new Runnable() {
-				    public void run() {
-				      date.setText(ding);
-				    }
-				  });
-				
+					public void run() {
+						date.setText(ding);
+					}
+				});
+
 			}
 		}, 0, 1000);
 	}
-	
+
 	public JTable getTable(){
 		return productTable;
 	}
-	
+
 	public void addActionListener (ActionListener listener) {
 		ok.addActionListener(listener);
 	}
-	
+
 	public void addOrderListener (OrderListener listener) {
 		this.listener = listener;
 	}
-	
+
 	public void performOrder (LoginDialog dialog) {
 		String login = "";
 		login += dialog.getUsername();
@@ -323,13 +333,13 @@ public class ViewCostumer extends JFrame implements Observer{
 		}
 		listener.orderPerformend(login, order);
 	}
-	
+
 	public static ViewCostumer getInstance () {
 		return instance;
 	}
-	
+
 	public void showError () {
 		JOptionPane.showMessageDialog(this, "Wrong Login Credentials, please try again!", "Authentification Error", JOptionPane.ERROR_MESSAGE);
 	}
-	
+
 }
