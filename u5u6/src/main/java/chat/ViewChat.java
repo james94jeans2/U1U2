@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
@@ -26,10 +25,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 public class ViewChat extends JFrame {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String userName;
 	private JTextArea users, chat;
@@ -39,58 +37,67 @@ public class ViewChat extends JFrame {
 	private ChatService server;
 	private Date date;
 	private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-	
+
 	public ViewChat (ChatClient client) {
 		super("chat : ");
 		initialized = false;
-		try {
+		try
+		{
 			userName = client.getName();
-		} catch (RemoteException e) {
+		} 
+		catch (RemoteException e)
+		{
 			e.printStackTrace();
 		}
 		this.setTitle("chat : " + userName);
 		initialize();
 		this.client = client;
+		//Setze dem client dies hier als view
 		client.setView(this);
-		try {
+		try 
+		{
+			//Es wird der server erittelt via naming.lookup
 			server = (ChatService) Naming.lookup("//localhost/server");
-		} catch (MalformedURLException | RemoteException | NotBoundException e) {
+		}
+		catch (MalformedURLException | RemoteException | NotBoundException e) 
+		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void initialize () {
 		this.setPreferredSize(new Dimension(200, 200));
 		this.setMinimumSize(new Dimension(200, 200));
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.X_AXIS));
 		this.setSize(200, 200);
 		this.addWindowListener(new WindowListener() {
-			
+
 			@Override
 			public void windowOpened(WindowEvent e) {
 			}
-			
+
 			@Override
 			public void windowIconified(WindowEvent e) {
 			}
-			
+
 			@Override
 			public void windowDeiconified(WindowEvent e) {
 			}
-			
+
 			@Override
 			public void windowDeactivated(WindowEvent e) {
 			}
-			
+
 			@Override
 			public void windowClosing(WindowEvent e) {
-					client.logout();
+				//Sollte das fenster geschlossen werden wird logout aufgerufen
+				client.logout();
 			}
-			
+
 			@Override
 			public void windowClosed(WindowEvent e) {
 			}
-			
+
 			@Override
 			public void windowActivated(WindowEvent e) {
 			}
@@ -102,7 +109,7 @@ public class ViewChat extends JFrame {
 		left.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Users"));
 		JButton send = new JButton("send");
 		left.add(send, BorderLayout.SOUTH);
-		
+
 		right = new JPanel();
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
 		chat = new JTextArea();
@@ -111,21 +118,23 @@ public class ViewChat extends JFrame {
 		chatPanel.add(new JScrollPane(chat), BorderLayout.CENTER);
 		chatPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Chat"));
 		right.add(chatPanel);
-		
+
 		final JTextArea input = new JTextArea();
 		input.addKeyListener(new KeyListener() {
-			
+
 			@Override
 			public void keyTyped(KeyEvent e) {
 			}
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 			}
-			
+
+			//Hier das gewünschte posten per STRG-Enter
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
 					sendChatMessage(input.getText());
 					input.setText("");
 				}
@@ -142,42 +151,49 @@ public class ViewChat extends JFrame {
 				input.setText("");
 			}
 		});
-		
+
 		this.add(left);
 		this.add(right);
 		initialized = true;
 		this.setVisible(true);
 		this.paint(getGraphics());
 	}
-	
+
 	public void sendChatMessage (String message) {
-		if (!message.trim().isEmpty()) {
+		if (!message.trim().isEmpty()) 
+		{
 			String out = "";
 			date = new Date();
 			out += "[" + format.format(date.getTime()) + "]";
 			out += userName + ": ";
 			out += message.trim();
-			try {
+			try 
+			{
 				server.send(out);
-			} catch (RemoteException e) {
+			} 
+			catch (RemoteException e) 
+			{
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	public void addChatMessage (String message) {
 		chat.append(message + "\n");
 		chat.setCaretPosition(chat.getText().length()-1);
 	}
-	
+
 	public void paint (Graphics g) {
-		if (initialized) {
+		if (initialized) 
+		{
 			int width = (this.getWidth() / 10) * 3;
-			if (width > 100) {
+			if (width > 100) 
+			{
 				width = 100;
 			}
 			left.setPreferredSize(new Dimension(width, this.getHeight()));
-			if (width == 100) {
+			if (width == 100) 
+			{
 				width = this.getWidth() - 100;
 			}
 			right.setPreferredSize(new Dimension(width, this.getHeight()));
@@ -186,12 +202,15 @@ public class ViewChat extends JFrame {
 		}
 		super.paint(g);
 	}
-	
+
 	public void updateUsers (List<String> list) {
-		if (initialized) {
+		if (initialized) 
+		{
 			users.setText("");
-			for (String string : list) {
-				if (userName.equals(string)) {
+			for (String string : list) 
+			{
+				if (userName.equals(string)) 
+				{
 					users.append("me\n");
 					continue;
 				}

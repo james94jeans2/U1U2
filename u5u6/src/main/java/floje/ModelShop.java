@@ -12,55 +12,70 @@ import listener.DeleteEvent;
 import fpt.com.Product;
 
 public class ModelShop extends Observable implements fpt.com.ProductList{
-	
+
 
 	private static final long serialVersionUID = -9111970668561441955L;
 	private floje.ProductList products = new floje.ProductList();
 	private CopyOnWriteArrayList<Order> orders;
 	private In in;
 	private Out out;
-	private Thread tIn, tOut;
+	private Thread inThread, outThread;
 	private Socket socket;
 
 	public ModelShop () {
 		super();
 		orders = new CopyOnWriteArrayList<Order>();
-		try {
+		try 
+		{
+			//Setze die daten für unsere Netzwerkbasierte kommunikation
+			//Also für die Speicherei im model
 			socket = new Socket(InetAddress.getByName("localhost"), 6666);
 			in = new In(socket, this);
 			out = new Out(socket.getOutputStream(), socket, in);
-			tIn = new Thread(in);
-			tOut = new Thread(out);
-			tIn.start();
-			tOut.start();
-		} catch (Exception e) {
+			inThread = new Thread(in);
+			outThread = new Thread(out);
+			inThread.start();
+			outThread.start();
+		} 
+		catch (Exception e) 
+		{
 			System.out.println("Couldn't connect to server!");
 		}
 	}
-	
+
 	public void closeConnnections () {
 		if (in == null || out == null) {
 			return;
 		}
 		out.stop();
-		if (tOut.isAlive()) {
-			try {
-				tOut.join();
-			} catch (InterruptedException e) {
+		if (outThread.isAlive()) {
+			try 
+			{
+				outThread.join();
+			} 
+			catch (InterruptedException e) 
+			{
 				e.printStackTrace();
 			}
 		}
 		in.stop();
-		if (tIn.isAlive()) {
-			try {
-				tIn.join();
-			} catch (InterruptedException e) {
+		if (inThread.isAlive()) 
+		{
+			try 
+			{
+				inThread.join();
+			} 
+			catch (InterruptedException e)
+			{
 				e.printStackTrace();
 			}
 		}
-		try {
+		try
+		{
 			socket.close();
-		} catch (IOException e) {
+		} 
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
@@ -70,12 +85,12 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 		super.setChanged();
 		super.notifyObservers(null);
 	}
-	
+
 	@Override
 	public Iterator<Product> iterator() {
 		return products.iterator();
 	}
-	
+
 	public CopyOnWriteArrayList<Order> getOrders () {
 		return orders;
 	}
@@ -88,7 +103,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 			return true;
 		}
 		return false;
-		
+
 	}
 
 	@Override
@@ -103,7 +118,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 
 	@Override
 	public int size() {
-		
+
 		return products.size();
 	}
 
@@ -116,17 +131,17 @@ public class ModelShop extends Observable implements fpt.com.ProductList{
 	public Product findProductByName(String name) {
 		return products.findProductByName(name);
 	}
-	
+
 	public Product[] toArray(){
 		return  products.toArray(new Product[0]);
 	}
-	
+
 	public void performOrder (String login, Order order) {
 		//TODO redirect to TCP/IP
-		if (in != null && out != null) {
-
+		if (in != null && out != null) 
+		{
 			out.sendOrder(login, order);
 		}
 	}
-	
+
 }

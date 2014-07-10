@@ -12,6 +12,7 @@ public class ControllerCostumer implements ActionListener, OrderListener {
 	private ModelShop shop;
 	private ViewCostumer view;
 	
+	//link model und view
 	public void link (ModelShop model, ViewCostumer costumer) {
 		shop = model;
 		view = costumer;
@@ -20,12 +21,14 @@ public class ControllerCostumer implements ActionListener, OrderListener {
 		view.addOrderListener(this);
 	}
 	
+	//Actionperformed methode für das login fenster
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JDialog dialog = new LoginDialog(view);
 		dialog.setVisible(true);
 	}
 
+	//Methode die aufgerufen wird wenn es eine ordergab
 	@Override
 	public void orderPerformend(String login, Order order) {
 		shop.performOrder(login, order);

@@ -1,19 +1,17 @@
 package floje;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.nio.channels.SocketChannel;
 
 public class In implements Runnable {
 
 	private Socket socket;
 	private ModelShop shop;
 	private boolean stop, changed, returnValue;
-	private ObjectInputStream ois;
-	
+	private ObjectInputStream objectInputStream;
+
 	public In (Socket socket, ModelShop shop) {
 		this.socket = socket;
 		this.shop = shop;
@@ -21,67 +19,102 @@ public class In implements Runnable {
 		changed = false;
 		returnValue = false;
 	}
-	
+
 	@Override
 	public void run() {
-		ois = null;
-		synchronized (socket) {
-		try {
-			ois = new ObjectInputStream(socket.getInputStream());
-			System.out.println("ois initialized");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		}
-		if (ois != null) {
-			while (socket.isConnected() && !stop) {
-				
-					try {
-						Object order = ois.readObject();
-						if (order instanceof Order) {
-							shop.addOrder((Order) order);
-						}
-						if (order instanceof Boolean) {
-							returnValue = (Boolean)order;
-							changed = true;
-						}
-					}catch (SocketException e) {
-					}catch (ClassNotFoundException | IOException e) {
-						e.printStackTrace();
-						break;
-					}
-			}
-			try {
-				ois.close();
-			} catch (IOException e) {
+		objectInputStream = null;
+		//Synchronized damit der socket nicht von mehreren manipuliert wird
+		synchronized (socket)
+		{
+			try
+			{
+				//Erstelle den stream vom stream des sockets
+				objectInputStream = new ObjectInputStream(socket.getInputStream());
+				System.out.println("ois initialized");
+			} 
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
-		}else {
+		}
+		//Wenn steam nicht null
+		if (objectInputStream != null) 
+		{
+			//und wenn socket verbunden und wir nicht stoppen wollen
+			while (socket.isConnected() && !stop) 
+			{
+				try 
+				{
+					//Lese order
+					Object order = objectInputStream.readObject();
+					if (order instanceof Order) 
+					{
+						//und füge sie hinzu falls instanz von order
+						shop.addOrder((Order) order);
+					}
+					if (order instanceof Boolean) 
+					{
+						//Oder setze returnValue und changed weil wir was geändert haben
+						returnValue = (Boolean)order;
+						changed = true;
+					}
+				}
+				catch (SocketException e)
+				{
+				}
+				catch (ClassNotFoundException | IOException e) 
+				{
+					e.printStackTrace();
+					break;
+				}
+			}
+			try 
+			{
+				//Schließe den stream nach allem
+				objectInputStream.close();
+			} 
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}else 
+		{
 			System.out.println("No object inputstream");
 		}
 	}
-	
+
 	public void stop() {
-		synchronized ((Object)stop) {
+		//Synchronized damit die stop variable nicht während oder
+		//nach dem lesen verändert wird
+		synchronized ((Object)stop) 
+		{
 			stop = true;
 		}
-		try {
-			ois.close();
-		} catch (IOException e) {
+		try 
+		{
+			//Stream schließen falls offen
+			objectInputStream.close();
+		} 
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public int bla () {
-		synchronized ((Object)changed) {
-			if (changed) {
+		//Synchronized über die changed variable, weil wir hier nicht 
+		//das selbe problem wollen wie bei stop(Nach der prüfung soll
+		//keine änderung passieren
+		synchronized ((Object)changed)
+		{
+			if (changed)
+			{
 				changed = false;
 				return returnValue ? 1 : -1;
 			}
 		}
 		return 0;
 	}
-	
+
 }
 

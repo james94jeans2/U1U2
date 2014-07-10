@@ -1,5 +1,6 @@
 package floje;
 
+//Should be obsolete and not used since database functions
 public class IDGenerator {
 	
 	private static final long maximumIDs = 999999;
