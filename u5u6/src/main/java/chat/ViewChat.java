@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -157,6 +158,8 @@ public class ViewChat extends JFrame {
 		initialized = true;
 		this.setVisible(true);
 		this.paint(getGraphics());
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation((screen.width - this.getWidth()) / 2, (screen.height - this.getHeight()) / 2);
 	}
 
 	public void sendChatMessage (String message) {
